@@ -34,3 +34,27 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+
+
+
+
+
+things to lookup
+
+how to redirect - done A. useRouter
+how to link external button to trigger form submit - done A. form id and button form attribute
+how to make scroll work from body not just when pointer is in container - done A. div for outer container
+aligning of first flex box in details page when using wrap - done A. gap instead of space
+need to get condition into hidden value. - done A. setValue
+where to put context in Next app
+How to do auth in next app
+google api
+what type is location in mySQL
+can you do flash messages in react
+are we sending whole data to db unnecessarily, can we add? so if author send author??? in item api
+what is better grid of flex?
+
+
+things to do
+update items api to not const

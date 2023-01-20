@@ -1,0 +1,551 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// needed to run npm i prisma --save-dev
+// npx prisma init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+// Note that .env was changed to .env.local (Next uses this)
+// This will make all Prisma commands fail because they are set to use .env
+// Scripts were added to package.json to rectify this
+
+// npm run migrate:dev --name init
+// run the above to migrate the model with the database.
+// migration syncs / modifies the database so that it matches the prisma model
+
+// npm run prisma:studio for GUI
+
+
+// Defining the database model...
+model Item {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name     String 
+  pickUpAddress    String?
+  locationCoordinates   String?    
+  category  String?
+  description   String?
+  brand       String?
+  model       String?
+  age         Int?      @db.TinyInt
+  importantNote   String?
+  size      String?
+  goodForIndicator GoodForIndicator?
+  specialItem SpecialItem?
+  carMake     String?
+  yearOfManufacture   Int @db.SmallInt
+  odometer    Int     @db.MediumInt
+  clothingLabel   String?
+  bookAuthor      String?
+  bookGenre       String?
+  condition    Condition?
+  itemPhotos    ItemPhotos[]
+  owner     UserRenterProfile    @relation(fields: [ownersRenterId], references: [id])
+  ownersRenterId   Int
+  active    Boolean     @default(false)
+  itemNewValue   Decimal?   @db.Decimal(9, 2)
+  rentPerHour   Boolean?     
+  rentPerHourPrice  Decimal?   @db.Decimal(7, 2) @default(0.00)
+  rentPerDay    Boolean?
+  rentPerDayPrice   Decimal?    @db.Decimal(7, 2) @default(0.00)
+  rentPerWeek     Boolean?
+  rentPerWeekPrice  Decimal?    @db.Decimal(7, 2) @default(0.00)
+  minimumRentalPeriod   RentalPeriods?
+  earlyCancellationPolicy      CancellationPolicy?
+  lateCancellationPolicy      CancellationPolicy?
+  customCancellationPolicy    String?
+  lateReturnPolicy        LateReturnPolicy?
+  reviews     ItemReview[]
+  bookings    Booking[]
+  insuranced       Boolean     @default(false)
+  hasClaims      Boolean      @default(false)
+}
+// will need insurancePolicy
+// will need to add special item modifyers.
+
+model ItemPhotos {
+  id        Int    @id @default(autoincrement())
+  item    Item    @relation(fields: [itemId], references: [id])
+  itemId    Int
+  imageUrl    String
+  order     Int   @db.TinyInt
+}
+
+enum GoodForIndicator {
+  kids
+  teenagers
+  adults
+  couples
+  families
+  groups
+  holiday
+  anAfternoon
+  aWeekend
+  tightBudget
+  tasteOfLuxury
+}
+
+enum SpecialItem {
+  Car
+  Clothing
+  Book
+  Property
+}
+// Lets not do property though
+
+enum Condition {
+  asGoodAsNew
+  aFewScuffs
+  heavilyUsed
+  oldAndTemperamental
+}
+
+enum RentalPeriods {
+  noMinimum
+  min1hour
+  min2hours
+  min3hours
+  min4hours
+  min5hours
+  min8hours
+  min10hours
+  min12hours
+  min1day
+  min2days
+  min3days
+  min4days
+  min5days
+  min1week
+  min2weeks
+  min3weeks
+  min4weeksOrGreater
+}
+
+enum CancellationPolicy {
+  freeCancellation
+  percentOfcontract10after24hours
+  percentOfcontract25after24hours
+  percentOfcontract50after24hours
+  percentOfcontract100after24hours
+  percentOfcontract10after28hours
+  percentOfcontract25after28hours
+  percentOfcontract50after28hours
+  percentOfcontract100after28hours
+  percentOfcontract10after1week
+  percentOfcontract25after1week
+  percentOfcontract50after1week
+  percentOfcontract100after1week
+  percentOfcontract10after2weeks
+  percentOfcontract25after2weeks
+  percentOfcontract50after2weeks
+  percentOfcontract100after2weeks
+  percentOfcontract10
+  percentOfcontract25
+  percentOfcontract50
+  percentOfcontract100
+  customPolicy
+}
+// may want option for custom policy
+
+
+enum LateReturnPolicy {
+  chargeForEachAdditionalHour
+  chargeForEachAdditionalDay
+  chargeForEachAdditionalHourPlus15
+  chargeForEachAdditionalDayPlus15
+  chargeForEachAdditionalHourPlus25
+  chargeForEachAdditionalDayPlus25
+  customPolicy
+}
+
+
+
+model Account {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name     String   
+  email     String      @unique
+  emailVerifiedOn   DateTime?
+  phoneNumber     String
+  phoneNumberVerifiedOn   DateTime?
+  homeAddress   String  
+  identificationDoc1url    String?
+  identificationDoc2url    String?
+  identifyingImageUrl     String?
+  profilePictureUrl     String?
+  identityDocumentsVerifiedOn   DateTime?
+  identityDocumentsVerifiedBy   String?
+  userRenteeProfile UserRenteeProfile?
+  isRenter    Boolean   @default(false)
+  userRenterProfile   UserRenterProfile?      
+  flags Investigation[]
+  accountBlacklistedOn    DateTime?
+}
+
+model Investigation {
+  id        Int      @id @default(autoincrement())
+  userAccount      Account   @relation(fields: [userId], references: [id])
+  userId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  flagType  FlagType
+  investigatingAgent  String
+  actions   String
+  recommendations   String
+  communications   MessageChain[]
+  result  FlagInvestigationResult
+  isClosed    Boolean     @default(false)
+}
+
+enum FlagType {
+  suspectedInsuranceScamer
+  suspectedBot
+  suspectedPolicyBreach
+  theftClaimAgainst
+  unresolvedDamageClaim
+  highDamageClaimRate
+  unresolvedTransaction
+  consistentLowRating
+  suspectedIdentityFraud
+}
+
+enum FlagInvestigationResult {
+  warned
+  accountSuspendedUntilRectified
+  userBlacklisted
+}
+
+model UserRenteeProfile {
+  id        Int    @id @default(autoincrement())
+  userAccount      Account   @relation(fields: [userId], references: [id])
+  userId Int @unique 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  recentSearch1 String?
+  recentSearch2 String?
+  recentSearch3 String?
+  recentSearch4 String?
+  isUnrated   Boolean   @default(true)
+  rating    Decimal     @db.Decimal(3, 2) @default(0.00)
+  reviews   RenteeReview[]
+  reviewsWritten    ItemReview[]
+  bookings    Booking[]
+  transactionCount   Int    @db.SmallInt  @default(0)
+  transactionValue   Decimal @db.Decimal(3, 2) @default(0.00)
+  claimsAgainst   Claim[]
+  isSuspended   Boolean     @default(false)
+
+}
+
+model UserRenterProfile {
+  id        Int    @id @default(autoincrement())
+  userAccount      Account   @relation(fields: [accountId], references: [id])
+  accountId Int @unique 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ownedItems    Item[]
+  isUnrated   Boolean   @default(true)
+  rating    Decimal     @db.Decimal(3, 2) @default(0.00)
+  avgResponseTime   Float     @default(0)
+  reviewsWritten  RenteeReview[]
+  transactionCount    Int   @default(0)
+  claimsAgainst        RenteeClaim[]
+  isSuspended   Boolean     @default(false)
+}
+
+model Booking {
+  id        Int    @id @default(autoincrement())
+  renter      UserRenteeProfile   @relation(fields: [userId], references: [id])
+  userId    Int
+  item    Item    @relation(fields: [itemId], references: [id])
+  itemId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  itemAgreedRate    Decimal   @db.Decimal(7, 2)
+  itemAgreedEarlyCancelPolicy    CancellationPolicy
+  itemAgreedLateCancelationPolicy   CancellationPolicy?
+  agreedDeposit     Decimal   @db.Decimal(7, 2)
+  expectedtransactionCost   Decimal   @db.Decimal(7, 2)
+  customCancellationPolicy    String?
+  itemAgreedLateReturnPolicy   LateReturnPolicy?
+  customLateReturnPolicy    String
+  pickUpTime    DateTime
+  returnTime    DateTime
+  RenterNote   String?
+  RenteeNote    String
+  communication   MessageChain[]
+  statusAccepted  Boolean   @default(false)
+  acceptedOnDate   DateTime?
+  statusDeclined  Boolean   @default(false)
+  declinedOnDate  DateTime?
+  modRequest    Boolean?
+  modPickUpTime    DateTime?
+  modReturnTime    DateTime?
+  statusCancelled   Boolean   @default(false)
+  cancelledOnDate   DateTime?
+  bookingClosedOnDate DateTime?
+  transaction   Transaction?
+  transactionStatus TransactionStatus @default(uninitialized)
+}
+
+model Transaction {
+  id        Int    @id @default(autoincrement())
+  booking      Booking   @relation(fields: [bookingId], references: [id])
+  bookingId Int @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  status    TransactionStatus
+  debitRecords       DebitRecord[]    
+  creditRecords     CreditRecord[]
+  depositDebitsSuccessful    Boolean   @default(false)
+  depositReturnSuccessful    Boolean   @default(false)
+  bookingDebitSuccessful    Boolean   @default(false)
+  renterConfirmDispatch   Boolean?
+  rentersOnDispatchReport  String?
+  rentersOnDispatchImages  RentersClaimImages[]
+  renteeConfirmReciept    Boolean?
+  renteeOnPickUpNotes    String?
+  renteeOnPickUpImages   RenteesClaimImages[]
+  pickUpTime    DateTime?
+  ReturnTime    DateTime?
+  enactedCancellationPolicy Boolean  @default(false)
+  cancellationForgiven Boolean?
+  enactedLateReturnPolicy Boolean    @default(false)
+  lateReturnForgiven Boolean?
+  openRenterClaim     Boolean               @default(false)
+  renterClaim     Claim?
+  claimedAmountDebitOutstanding     Boolean @default(false)
+  openRenteeClaim     Boolean               @default(false)
+  renteeClaim     RenteeClaim?
+  claimRefundCreditOutstanding  Boolean     @default(false)
+  cancelledBookingRefund     Decimal   @db.Decimal(7, 2)   @default(0.00)
+  cancelledBookingRefundCreditOutstanding Boolean     @default(false)
+  renteeDepositCreditSuccessful    Boolean   @default(false)
+  letePolicyAmountOwed    Decimal       @db.Decimal(7, 2)   @default(0.00)
+  latePolicyDebitsOutstanding    Boolean   @default(false)
+  renterCreditSuccessful  Boolean   @default(false)
+}
+
+enum TransactionStatus {
+  uninitialized
+  open
+  awaitingDepositDebit
+  awaitingBookingDebit
+  awaitingPickupProcessing
+  awaitingCancellationProcessing
+  awaitingDropOffProcessing
+  awaitingLateReturnProcessing
+  awaitingRenteeClaimProcessing
+  awaitingRenterClaimProcessing
+  awaitingRenteeRefund
+  awaitingAdditionalDebit
+  awaitingRenterCredit
+  closed
+}
+
+
+model ItemReview {
+  id      Int       @id @default(autoincrement())
+  item    Item     @relation(fields: [itemId], references: [id])
+  author    UserRenteeProfile     @relation(fields: [userRenteeId], references: [id])
+  userRenteeId    Int
+  itemId    Int
+  createdAt DateTime @default(now())
+  rating    Rating
+  publicComment   String?
+  privateComment    String?
+  reviewDisqualified    Boolean     @default(false)
+}
+
+model RenteeReview {
+  id      Int       @id @default(autoincrement())
+  author    UserRenterProfile     @relation(fields: [userRenterId], references: [id])
+  userRenterId    Int
+  aboutRentee     UserRenteeProfile   @relation(fields: [userRenteeId], references: [id])
+  userRenteeId    Int
+
+  createdAt DateTime @default(now())
+  rating    Rating
+  publicComment   String?
+  privateComment    String?
+  reviewDisqualified    Boolean     @default(false)
+}
+
+enum Rating {
+  rated1
+  rated2
+  rated3
+  rated4
+  rated5
+}
+
+model Claim {
+  id      Int       @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  transaction   Transaction  @relation(fields: [transactionId], references: [id])
+  transactionId Int @unique
+  againstRentee   UserRenteeProfile   @relation(fields: [userId], references: [id])
+  userId    Int
+  claimType   ClaimType
+  details     String
+  pictureEvidence     RentersClaimImages[]
+  value     Decimal     @db.Decimal(7, 2) @default(0.00)
+  statusClosed    Boolean    @default(false)
+  closedAt      DateTime?    
+  result    ClaimResult?
+  comments    String?
+  report      String?
+}
+
+enum ClaimType {
+  damage
+  theft
+}
+
+enum ClaimResult {
+  paid
+  rejected
+}
+
+model RentersClaimImages {
+  id          Int       @id @default(autoincrement())
+  transaction   Transaction?  @relation(fields: [transactionId], references: [id])
+  transactionId Int?
+  info      String?
+  imageUrl    String
+  claim     Claim?   @relation(fields: [claimId], references: [id])
+  claimId   Int?
+}
+
+model RenteesClaimImages {
+  id          Int       @id @default(autoincrement())
+  transaction   Transaction?  @relation(fields: [transactionId], references: [id])
+  transactionId Int?
+  info      String?
+  imageUrl    String
+  claim     RenteeClaim?    @relation(fields: [claimId], references: [id])
+  claimId   Int?
+}
+
+model RenteeClaim {
+  id      Int       @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  transaction   Transaction  @relation(fields: [transactionId], references: [id])
+  transactionId Int @unique
+  claimAgainst  UserRenterProfile   @relation(fields: [userId], references: [id])
+  userId    Int
+  claimType   RenteeClaimType
+  details     String
+  pictureEvidence     RenteesClaimImages[]
+  value     Decimal     @db.Decimal(7, 2) @default(0.00)
+  statusClosed    Boolean    @default(false)
+  closedAt      DateTime?    
+  result    ClaimResult?
+  comments    String?
+  report      String?
+}
+
+enum RenteeClaimType {
+  itemNotWorking
+  conditionNotAsDescribed
+  itemBrokeFromNormalUse
+  problemWithPickup
+  other
+}
+
+enum RenteeClaimResult {
+  refunded
+  rejected
+}
+
+model CreditRecord {
+  id      Int       @id @default(autoincrement())
+  type    CreditType
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  transaction   Transaction  @relation(fields: [transactionId], references: [id])
+  transactionId Int
+  creditAmount   Decimal   @db.Decimal(9, 2) @default(0.00)
+  paymentMethod   PaymentMethod
+  providersRecordId   String?
+  success     Boolean   @default(false)
+}
+// Need to change ? in provRec
+
+
+model DebitRecord {
+  id      Int       @id @default(autoincrement())
+  type    DebitType
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  transaction   Transaction  @relation(fields: [transactionId], references: [id])
+  transactionId Int
+  creditAmount   Decimal   @db.Decimal(9, 2) @default(0.00)
+  paymentMethod   PaymentMethod
+  providersRecordId   String?
+  success     Boolean   @default(false)
+}
+// Need to change ? in provRec
+
+
+enum PaymentMethod {
+  stripe
+  paypal
+  googlePay
+}
+
+enum DebitType {
+  deposit
+  bookingDebit
+  latePolicyDebit
+  claimDebit
+}
+
+enum CreditType {
+  depositReturn
+  bookingAmountRefund
+  totalRefund
+  claimReimbursement
+  renterPayment
+}
+
+
+model MessageChain {
+  id      Int       @id @default(autoincrement())
+  type    MessageType
+  Subject     String
+  booking      Booking?   @relation(fields: [bookingId], references: [id])
+  bookingId Int?
+  investigation   Investigation?   @relation(fields: [investigationId], references: [id])
+  investigationId Int?
+  messages    Message[]   
+}
+
+enum MessageType {
+  bookingQuery
+  investigation
+  inbound
+  notice
+}
+
+
+model Message {
+  id      Int       @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  MessageChain      MessageChain  @relation(fields: [MessageChainId], references: [id])
+  MessageChainId Int
+  orderInChain  Int
+  text    String 
+}
+// should not need order in chain, should be able to get from table

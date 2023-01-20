@@ -1,0 +1,23 @@
+
+
+
+
+  .content-button {
+    @apply px-6 py-5 border rounded-2xl border-mainGrey-100 cursor-pointer
+     hover:border-2 hover:border-black
+  }
+
+  .content-button-selected {
+    @apply px-6 py-5 border-2 rounded-2xl cursor-pointer
+   border-black bg-gray-100
+  }
+
+  .mediumContainer {
+    @apply w-full max-w-[640px] px-5 py-5 sm:py-10 mx-auto bg-[red]
+  }
+  
+
+
+  
+
+
