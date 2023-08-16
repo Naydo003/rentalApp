@@ -1,21 +1,25 @@
-import React from 'react'
+import React, { useState, useContext } from 'react'
 import { useRouter } from 'next/router'
 import { useForm } from 'react-hook-form'
-
-import NavBarCreateItem from '../../../modules/components/NavBarCreateItem'
-import FooterCreateItem from '../../../modules/components/create-item-forms/FooterCreateItem'
-
+import axios from 'axios';
+import { ItemContext } from '../../../common/contexts/item-context'
+import NavBarCreateItem from '../../../modules/create-item/components/NavBarCreateItem'
+import FooterCreateItem from '../../../modules/create-item/components/FooterCreateItem'
+import MapUI from '../../../common/components/UIElements/MapUI';
+import { getCoordsForAddress } from '../../../common/utilities/getLocation'
 
 function AddLocationPage() {
-
-  const { register, handleSubmit } = useForm()
+  const [ coords, setCoords ] = useState({lat: -33.8688197, lng: 151.2092955})
+  const { register, handleSubmit, setValue } = useForm()
 
   let router = useRouter()
-  const itemId = 5
+  const { itemId, itemName } = useContext(ItemContext)
   
 
   const onSubmit = async (updateData) => {
     console.log("********onsubmit triggered******")
+    console.log(updateData)
+    
 
     try {
       const result = await axios.patch('/api/items', { updateData, itemId })
@@ -23,12 +27,22 @@ function AddLocationPage() {
     console.log(result)
 
     router.push(`/create-a-listing/${itemId}/add-photos`)
-
+ 
     } catch (err){
       console.log(err)
     }                          
   }
 
+  async function processAddress(e) {
+    console.log('process address')
+
+    console.log(e.target.value)
+    const response = await getCoordsForAddress(e.target.value)
+    console.log(response)
+
+    setCoords(response)
+    setValue('location', response)      // may have to convert this to number not object
+  }
 
   return (
     <div className='h-screen flex flex-col'>
@@ -42,18 +56,20 @@ function AddLocationPage() {
           {/* This might be done with google api instead */}
           <form id='add-location-form' className='mt-10 max-w-[400px] mx-auto flex flex-col' onSubmit={handleSubmit(onSubmit)}> 
             <label className='form-label' htmlFor='address'>Address:</label>
-            <input type='text' {...register('address')} placeholder='7 Alexander St, New York 10011' />
+            <input type='text' {...register('address')} placeholder='7 Alexander St, New York 10011' onBlur={processAddress}/>
             <input {...register('location')} />
           </form>
 
+
+
           <div className='mt-10 border h-60'>
-            Map
+            <MapUI center={coords} zoom={10} />
           </div>
 
     
         </div>
       </div>
-        <FooterCreateItem prevRoute={`/create-a-listing/${itemId}/add-condition`}  />
+        <FooterCreateItem formId='add-location-form' prevRoute={`/create-a-listing/${itemId}/add-condition`}  />
     </div>
   )
 }
@@ -61,3 +77,5 @@ function AddLocationPage() {
 export default AddLocationPage
 
 // need to get location too
+
+// || {lat: -33.8688197, lng: 151.2092955}

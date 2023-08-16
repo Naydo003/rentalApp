@@ -6,7 +6,8 @@ function ButtonContent({ buttonName, isSelected, onSelectHandler, children, vari
 const onClick = () => onSelectHandler(buttonName)
 
   const variants = {
-    detailsCategory: 'min-w-[20%]'
+    detailsCategory: 'min-w-[20%]',
+    reducedPadding: 'px-2 py-2'
   }
 
   return (
@@ -15,7 +16,6 @@ const onClick = () => onSelectHandler(buttonName)
     className={isSelected ? `content-button-selected ${variants[variant]}` : `content-button ${variants[variant]}`} 
     onClick={onClick}>
       {children}
-
 
     </div>
 

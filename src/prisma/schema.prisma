@@ -32,7 +32,7 @@ model Item {
   pickUpAddress    String?
   locationCoordinates   String?    
   category  String?
-  description   String?
+  description   String?     @db.VarChar(800)
   brand       String?
   model       String?
   age         Int?      @db.TinyInt
@@ -41,8 +41,8 @@ model Item {
   goodForIndicator GoodForIndicator?
   specialItem SpecialItem?
   carMake     String?
-  yearOfManufacture   Int @db.SmallInt
-  odometer    Int     @db.MediumInt
+  yearOfManufacture   Int?    @db.SmallInt
+  odometer    Int?     @db.MediumInt
   clothingLabel   String?
   bookAuthor      String?
   bookGenre       String?
@@ -59,9 +59,15 @@ model Item {
   rentPerWeek     Boolean?
   rentPerWeekPrice  Decimal?    @db.Decimal(7, 2) @default(0.00)
   minimumRentalPeriod   RentalPeriods?
-  earlyCancellationPolicy      CancellationPolicy?
-  lateCancellationPolicy      CancellationPolicy?
-  customCancellationPolicy    String?
+  weekendRentPerHour   Boolean?     
+  weekendRentPerHourPrice  Decimal?   @db.Decimal(7, 2) @default(0.00)
+  weekendRentPerDay    Boolean?
+  weekendRentPerDayPrice   Decimal?    @db.Decimal(7, 2) @default(0.00)
+  weekendMinimumRentalPeriod   RentalPeriods?
+  generalCancellationPolicy      CancellationPolicyCharge?
+  lateCancellationPolicyTime      CancellationPolicyTime?
+  lateCancellationPolicyCharge      CancellationPolicyCharge?
+  customCancellationPolicy    String?     @db.VarChar(800)
   lateReturnPolicy        LateReturnPolicy?
   reviews     ItemReview[]
   bookings    Booking[]
@@ -79,6 +85,26 @@ model ItemPhotos {
   order     Int   @db.TinyInt
 }
 
+enum Category {
+  kitchenAppliance
+  toolsDIY
+  gardening
+  games
+  sportsEquipment
+  waterSports
+  book
+  artsCrafts
+  clothing
+  outdoor
+  camping
+  bikes
+  car
+  boats
+  electronics
+  hobby
+  other
+}
+
 enum GoodForIndicator {
   kids
   teenagers
@@ -94,10 +120,10 @@ enum GoodForIndicator {
 }
 
 enum SpecialItem {
-  Car
-  Clothing
-  Book
-  Property
+  car
+  clothing
+  book
+  property
 }
 // Lets not do property though
 
@@ -109,7 +135,7 @@ enum Condition {
 }
 
 enum RentalPeriods {
-  noMinimum
+  none
   min1hour
   min2hours
   min3hours
@@ -126,32 +152,25 @@ enum RentalPeriods {
   min1week
   min2weeks
   min3weeks
-  min4weeksOrGreater
+  min4weeks
 }
 
-enum CancellationPolicy {
-  freeCancellation
-  percentOfcontract10after24hours
-  percentOfcontract25after24hours
-  percentOfcontract50after24hours
-  percentOfcontract100after24hours
-  percentOfcontract10after28hours
-  percentOfcontract25after28hours
-  percentOfcontract50after28hours
-  percentOfcontract100after28hours
-  percentOfcontract10after1week
-  percentOfcontract25after1week
-  percentOfcontract50after1week
-  percentOfcontract100after1week
-  percentOfcontract10after2weeks
-  percentOfcontract25after2weeks
-  percentOfcontract50after2weeks
-  percentOfcontract100after2weeks
-  percentOfcontract10
-  percentOfcontract25
-  percentOfcontract50
-  percentOfcontract100
+enum CancellationPolicyCharge {
+  free
+  percent10
+  percent25
+  percent50
+  percent100
   customPolicy
+}
+
+enum CancellationPolicyTime {
+  weeks2
+  weeks1
+  hours48
+  hours24
+  customPolicy
+  none
 }
 // may want option for custom policy
 
@@ -226,8 +245,8 @@ enum FlagInvestigationResult {
 
 model UserRenteeProfile {
   id        Int    @id @default(autoincrement())
-  userAccount      Account   @relation(fields: [userId], references: [id])
-  userId Int @unique 
+  userAccount      Account   @relation(fields: [accountId], references: [id])
+  accountId Int @unique 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   recentSearch1 String?
@@ -271,8 +290,9 @@ model Booking {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   itemAgreedRate    Decimal   @db.Decimal(7, 2)
-  itemAgreedEarlyCancelPolicy    CancellationPolicy
-  itemAgreedLateCancelationPolicy   CancellationPolicy?
+  itemAgreedEarlyCancelPolicy    CancellationPolicyCharge
+  itemAgreedLateCancelationPolicyTime   CancellationPolicyTime?
+  itemAgreedLateCancelationPolicyCharge  CancellationPolicyCharge?
   agreedDeposit     Decimal   @db.Decimal(7, 2)
   expectedtransactionCost   Decimal   @db.Decimal(7, 2)
   customCancellationPolicy    String?
@@ -356,9 +376,9 @@ enum TransactionStatus {
 model ItemReview {
   id      Int       @id @default(autoincrement())
   item    Item     @relation(fields: [itemId], references: [id])
+  itemId    Int
   author    UserRenteeProfile     @relation(fields: [userRenteeId], references: [id])
   userRenteeId    Int
-  itemId    Int
   createdAt DateTime @default(now())
   rating    Rating
   publicComment   String?

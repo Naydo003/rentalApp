@@ -2,9 +2,10 @@ import React from 'react'
 import { useRouter } from 'next/router'
 import { useForm } from 'react-hook-form'
 import axios from "axios"
-import NewItemForm from '../../modules/components/create-item-forms/NewItemForm'
-import NavBarCreateItem from '../../modules/components/NavBarCreateItem'
-import FooterCreateItem from '../../modules/components/create-item-forms/FooterCreateItem'
+import NewItemForm from '../../modules/create-item/components/NewItemForm'
+import NavBarCreateItem from '../../modules/create-item/components/NavBarCreateItem'
+import FooterCreateItem from '../../modules/create-item/components/FooterCreateItem'
+import { seed } from '@/common/utilities/db-seeder'
 
 // We could use local styles here if need
 // import styles from '../../../styles/create-item.module.css'
@@ -13,32 +14,18 @@ import FooterCreateItem from '../../modules/components/create-item-forms/FooterC
 function CreateAListing() {
 
   let router = useRouter()
-  const userRenterId = 5
-
-  const nextButtonHandler = () => {
-    console.log('launch axios request then redirect to ...')
-
-    router.push(`/create-a-listing/${itemId}/overview`)
-
-  }
-
-
-   
-
 
   return (
 
-    <div className='h-screen flex flex-col'>
-      <NavBarCreateItem />
-      <div className='medium-container flex-1 overflow-auto'>
-        <h1 className='heading'>Become A Renter</h1>
-
-        <NewItemForm />
-
+      <div className='h-screen flex flex-col'>
+        <NavBarCreateItem />
+        <div className='medium-container flex-1 overflow-auto'>
+          <h1 className='heading'>Become A Renter</h1>
+          <NewItemForm />
+          <button onClick={() => seed(10)} >Seed DataBase 10</button>
+        </div>
+        <FooterCreateItem formId='new-item-form' prevRoute={`/`}  />
       </div>
-      <FooterCreateItem nextButtonHandler={nextButtonHandler} prevRoute={`/`}  />
-
-    </div>
   )
 }
 

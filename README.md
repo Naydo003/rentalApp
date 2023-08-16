@@ -47,14 +47,16 @@ how to link external button to trigger form submit - done A. form id and button 
 how to make scroll work from body not just when pointer is in container - done A. div for outer container
 aligning of first flex box in details page when using wrap - done A. gap instead of space
 need to get condition into hidden value. - done A. setValue
-where to put context in Next app
+where to put context in Next app - done, use Modular folder structure, put it with its feature
 How to do auth in next app
 google api
 what type is location in mySQL
 can you do flash messages in react
 are we sending whole data to db unnecessarily, can we add? so if author send author??? in item api
-what is better grid of flex?
+what is better grid of flex? - done, grid where layout shapes content, flex where content shapes layout
 
 
 things to do
 update items api to not const
+
+error - callback not a function on image upload

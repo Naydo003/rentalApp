@@ -35,13 +35,17 @@
     @apply text-3xl text-mainBlack-100 font-semibold leading-normal mb-4
   }
 
+  .subheading {
+    @apply text-xl text-mainBlack-100 font-semibold leading-normal mb-4
+  }
+
   .main-button {
     @apply px-6 py-3 w-full border bg-mainColour-100 rounded-lg text-white cursor-pointer
      hover:bg-mainColour-100/70 hover:border-gray-500
   }
 
   .secondary-button {
-    @apply px-6 py-3 w-full border-2 border-black rounded-lg text-white text-center cursor-pointer
+    @apply px-6 py-3 w-full border-2 border-black rounded-lg text-black text-center cursor-pointer
      hover:border-gray-500 hover:border-4
   }
 
@@ -64,15 +68,18 @@
     @apply w-full max-w-[640px] px-5 py-5 sm:py-10 mx-auto
   }
   
+  .large-container {
+    @apply w-full max-w-[1200px] px-5 py-5 sm:py-10 mx-auto
+  }
   
   .form-label {
-    @apply text-base text-mainBlack-100 font-semibold leading-none bg-cyan-500 
+    @apply text-sm text-mainBlack-100 font-semibold leading-none inline-block align-middle bg-cyan-500 h-fit my-auto
  
   }
   
   .form-input {
-    @apply outline-none bg-slate-400/10 rounded-sm border-[#242424] 
-    px-4 py-2 text-gray-500 placeholder-gray-500 transition-all
+    @apply outline-none bg-slate-400/10 rounded-sm border-[#242424]
+    px-4 py-1 text-gray-500 placeholder-gray-500 transition-all text-sm
      focus:border-mainColour-100/40 focus:text-mainColour-100/40 hover:border-mainColour-100/40
   }
 

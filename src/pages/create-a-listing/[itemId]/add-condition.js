@@ -1,15 +1,14 @@
-import React from 'react'
+import React, {useContext} from 'react'
+import { ItemContext } from '../../../common/contexts/item-context'
+import NavBarCreateItem from '../../../modules/create-item/components/NavBarCreateItem'
+import FormAddCondition from '../../../modules/create-item/components/FormAddCondition'
 
-import NavBarCreateItem from '../../../modules/components/NavBarCreateItem'
-import FormAddCondition from '../../../modules/components/create-item-forms/FormAddCondition'
-
-import FooterCreateItem from '../../../modules/components/create-item-forms/FooterCreateItem'
+import FooterCreateItem from '../../../modules/create-item/components/FooterCreateItem'
 
 
 function AddConditionPage() {
 
-  console.log('page-rerender')
-  const itemId = 5
+  const { itemId, itemName } = useContext(ItemContext)
 
   
   return (

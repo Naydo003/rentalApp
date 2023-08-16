@@ -1,4 +1,4 @@
-import { prisma } from '../../utils/db'
+import { prisma } from '../../database/db'
 
 export default async function handler(req, res) {
 
