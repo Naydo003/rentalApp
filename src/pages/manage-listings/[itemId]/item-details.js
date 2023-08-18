@@ -80,7 +80,7 @@ function ItemDetails({item}) {
               <p className=''>Item Details for {item.name}</p>
               <p className=''>Category: {categoriesTitleMap[item.category]}</p>
               <p className=''>Description:</p>
-              {item.description.split('\n').map((para) => <p className='mb-4'>{para}</p>)}
+              {item.description.split('\n').map((para, idx) => <p key={idx} className='mb-4'>{para}</p>)}
               <p className=''>Pick Up Address {item.pickUpAddress}</p>
               {item.brand && <p className=''>Brand: {item.brand}</p>}
               {item.model && <p className=''>Model: {item.model}</p>}
@@ -187,10 +187,6 @@ export default ItemDetails
 
 export async function getServerSideProps(context) {
 
-  console.log("context.params")
-  console.log(context.params)
-
-  
 
   console.log("getting ssP's")
   const item = await prisma.item.findUnique({

@@ -189,10 +189,10 @@ function AddCancellationPolicy() {
 
           <p className='secondary-text my-2 underline'>Notes</p>
           <ol>
-            <li className='secondary-text leading-snug my-2 ml-4 list-disc'>There is always a compulsary allowance of 24hours after a booking has been made that a customer is allowed to cancel without any cancellation fees. We believe customers should never be punished for making a mistake during a booking if they act fast to fix it. This 24 hour allowance drops down to 1 hour if a same day booking.</li>
-            <li className='secondary-text leading-snug my-2 ml-4 list-disc'>It is advised to have a late cancellation policy as a minimum to discourage reckless booking of your item</li>
-            <li className='secondary-text leading-snug my-2 ml-4 list-disc'>Having a custom policy will not be handled automatically by xxxx and can only be enforced by dispute claim resolution process which may take a significant time and is not required to apply your contract.</li>
-            <li className='secondary-text leading-snug my-2 ml-4 list-disc'>To understand more about cancellation policies read here or contact a representative </li>
+            <li key='1' className='secondary-text leading-snug my-2 ml-4 list-disc'>There is always a compulsary allowance of 24hours after a booking has been made that a customer is allowed to cancel without any cancellation fees. We believe customers should never be punished for making a mistake during a booking if they act fast to fix it. This 24 hour allowance drops down to 1 hour if a same day booking.</li>
+            <li key='2' className='secondary-text leading-snug my-2 ml-4 list-disc'>It is advised to have a late cancellation policy as a minimum to discourage reckless booking of your item</li>
+            <li key='3' className='secondary-text leading-snug my-2 ml-4 list-disc'>Having a custom policy will not be handled automatically by xxxx and can only be enforced by dispute claim resolution process which may take a significant time and is not required to apply your contract.</li>
+            <li key='4' className='secondary-text leading-snug my-2 ml-4 list-disc'>To understand more about cancellation policies read here or contact a representative </li>
           </ol>
           
         </div>

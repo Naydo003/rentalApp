@@ -40,6 +40,9 @@ export default async function handler(req, res) {
 
   switch (req.method) {
     case 'POST':
+      console.log('req.body')
+      console.log(req.body.userRenterId)
+
       const { name } = req.body.newItemData
       const ownersRenterId  = req.body.userRenterId
       

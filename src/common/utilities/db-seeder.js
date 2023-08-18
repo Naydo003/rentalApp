@@ -1,7 +1,10 @@
 
 import axios from "axios";
 
+
 import { categories, specialItem, goodForIndicator, condition, rentalPeriods, cancellationPolicyCharge, cancellationPolicyTime, lateReturnPolicies } from "@/common/utilities/enumerables";
+import { useContext } from "react";
+import { UserContext } from "../contexts/user-context";
 
 
 const loremIpsum = "Lorem ipsum is a name for a common type of placeholder text. Also known as filler or dummy text, this is text copy that serves to fill a space without saying anything meaningful. It's essentially nonsense text that still gives an idea of what real words will look like in the final product."
@@ -20,11 +23,10 @@ const brand = [ 'Bosch', 'Makita', 'Tent Tipi', 'Coleman', 'Sunbeam', 'Westingho
 const model = [ 'AX1', 'B25', 'ZX47', 'Tough', 'Banshee', '007 Edition']
 const sizes = [ 'Small', 'Medium', 'Large', 'Extra Large', '8', '11', '42', '10' ]
 
-export async function seed(number) {
+export async function seed(number, userRenterId, accountId) {
 
 
-  let accountId = 2
-  let userRenterId = 5
+
 
   for (let i=0; i < number; i++){
 
@@ -35,20 +37,21 @@ export async function seed(number) {
       name: name
     }
     let incalls = (Math.random()*2) > 1 ? true : false
-      
+    let renterId
     if (!userRenterId) {
       try {
         const { data } = await axios.post('/api/renter-profile', { accountId })
         console.log("*************************************************************************")
         console.log(data)
-        setUserRenterId = data.id
+        setUserRenterId(data.id)
+        renterId = data.id
       } catch (err){
         console.log(err)
       }
     }
 
     try {
-      const { data } = await axios.post('/api/items', { newItemData, userRenterId })
+      const { data } = await axios.post('/api/items', { newItemData, userRenterId: renterId || userRenterId })
       const newId = data.id
       
       if (!newId) {

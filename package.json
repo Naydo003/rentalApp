@@ -32,7 +32,8 @@
     "react-date-range": "^1.4.0",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.41.5",
-    "react-switch": "^7.0.0"
+    "react-switch": "^7.0.0",
+    "react-toastify": "^9.1.3"
   },
   "devDependencies": {
     "@svgr/webpack": "^6.5.1",

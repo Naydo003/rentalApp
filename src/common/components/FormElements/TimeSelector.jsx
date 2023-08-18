@@ -26,8 +26,7 @@ let t = new Date()
 t.setHours(0,0,0)
 let end = new Date()
 end.setHours(23,45,0)
-console.log(t)
-console.log(end)
+
 
 for (let i = t; i <= end; i.setMinutes(i.getMinutes() + 15)) {
 
@@ -39,7 +38,7 @@ for (let i = t; i <= end; i.setMinutes(i.getMinutes() + 15)) {
     time: new Date(i)
   })
 }
- console.log(times)
+
 
 function TimeSelector(props) {
 

@@ -52,6 +52,7 @@ model Item {
   ownersRenterId   Int
   active    Boolean     @default(false)
   itemNewValue   Decimal?   @db.Decimal(9, 2)
+  deposit      Decimal?   @db.Decimal(9, 2)
   rentPerHour   Boolean?     
   rentPerHourPrice  Decimal?   @db.Decimal(7, 2) @default(0.00)
   rentPerDay    Boolean?
@@ -141,15 +142,26 @@ enum RentalPeriods {
   min3hours
   min4hours
   min5hours
+  min6hours
+  min7hours
   min8hours
+  min9hours
   min10hours
+  min11hours
   min12hours
   min1day
   min2days
   min3days
   min4days
   min5days
-  min1week
+  min6days
+  min7days
+  min8days
+  min9days
+  min10days
+  min11days
+  min12week
+  min13days
   min2weeks
   min3weeks
   min4weeks
@@ -282,39 +294,89 @@ model UserRenterProfile {
 }
 
 model Booking {
-  id        Int    @id @default(autoincrement())
-  renter      UserRenteeProfile   @relation(fields: [userId], references: [id])
-  userId    Int
-  item    Item    @relation(fields: [itemId], references: [id])
-  itemId    Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  itemAgreedRate    Decimal   @db.Decimal(7, 2)
+  id          Int    @id @default(autoincrement())
+  renter      UserRenteeProfile   @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  userId      Int
+  item        Item    @relation(fields: [itemId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  itemId      Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  itemAgreedRate    String   
   itemAgreedEarlyCancelPolicy    CancellationPolicyCharge
   itemAgreedLateCancelationPolicyTime   CancellationPolicyTime?
   itemAgreedLateCancelationPolicyCharge  CancellationPolicyCharge?
-  agreedDeposit     Decimal   @db.Decimal(7, 2)
-  expectedtransactionCost   Decimal   @db.Decimal(7, 2)
-  customCancellationPolicy    String?
-  itemAgreedLateReturnPolicy   LateReturnPolicy?
-  customLateReturnPolicy    String
-  pickUpTime    DateTime
-  returnTime    DateTime
-  RenterNote   String?
-  RenteeNote    String
+  agreedDeposit             Decimal?   @db.Decimal(7, 2)
+  expectedtransactionCost       Decimal   @db.Decimal(7, 2)
+  customCancellationPolicy      String?   @db.VarChar(800)
+  itemAgreedLateReturnPolicy    LateReturnPolicy?
+  customLateReturnPolicy        String?     @db.VarChar(800)
+  pickUpTime      DateTime
+  returnTime      DateTime
+  renterNote      String?
+  renteeNote      String
   communication   MessageChain[]
-  statusAccepted  Boolean   @default(false)
-  acceptedOnDate   DateTime?
-  statusDeclined  Boolean   @default(false)
-  declinedOnDate  DateTime?
-  modRequest    Boolean?
-  modPickUpTime    DateTime?
-  modReturnTime    DateTime?
-  statusCancelled   Boolean   @default(false)
-  cancelledOnDate   DateTime?
-  bookingClosedOnDate DateTime?
-  transaction   Transaction?
-  transactionStatus TransactionStatus @default(uninitialized)
+  status                    BookingStatus   @default(requested)
+  acceptedOnDate            DateTime?
+  confirmedAndDepositOnDate DateTime?
+  declinedOnDate            DateTime?
+  retractedOnDate           DateTime?
+  modRequestDetails         BookingModDetails[]
+  cancellationDetails       CancellationDetails[]
+  bookingClosedOnDate       DateTime?
+  transaction         Transaction?
+  transactionStatus   TransactionStatus @default(uninitialized)
+}
+
+enum BookingStatus {
+  requested
+  accepted
+  declined
+  retracted
+  confirmed
+  modRequestedByUser
+  modRequestOrCancelByUser
+  cancelledByUser
+  modRequestedByEscort
+  modRequestOrCancelByEscort
+  cancelledByEscort
+  inProgress
+  completed
+  closed
+}
+
+model BookingModDetails {
+  id                        Int       @id @default(autoincrement())
+  booking                   Booking    @relation(fields: [bookingId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  bookingId                 Int
+  initiatedByRenter         Boolean     @default(false)
+  createdAt                 DateTime    @default(now())
+  updatedAt                 DateTime?   @updatedAt
+  itemAgreedRate            Decimal?    @db.Decimal(7, 2)
+  agreedDeposit             Decimal?    @db.Decimal(7, 2)
+  expectedtransactionCost   Decimal?    @db.Decimal(7, 2)
+  pickUpTime                DateTime?
+  returnTime                DateTime?
+  renterNote                String?
+  renteeNote                String?
+  cancelIfReject            Boolean     @default(false)
+  status                    ModStatus?     
+}
+
+enum ModStatus {
+  requested
+  retracted
+  rejected
+  approved
+}
+
+model CancellationDetails {
+  id                        Int       @id @default(autoincrement())
+  booking                   Booking    @relation(fields: [bookingId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  bookingId                 Int
+  initiatedByRenter         Boolean     @default(false)
+  createdAt                 DateTime    @default(now())
+  escortNote                String?
+  userNote                  String?
 }
 
 model Transaction {

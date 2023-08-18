@@ -1,14 +1,12 @@
 import ButtonMain from '@/common/ButtonMain';
 import React, { useEffect, useState } from 'react'
-import { Calendar, DateRange } from 'react-date-range';
+import { DateRange } from 'react-date-range';
 import { useForm } from 'react-hook-form';
 import 'react-date-range/dist/styles.css'; // main style file
 import 'react-date-range/dist/theme/default.css'; // theme css file
-import Input from '@/common/components/FormElements/Input';
-import Select from '@/common/components/FormElements/Select';
 import { VALIDATOR_REQUIRE } from '@/common/utilities/validators';
-import { timeframe } from '@/common/utilities/enumerables';
 import TimeSelector from '@/common/components/FormElements/TimeSelector';
+import { useRouter } from 'next/router';
 
 
 
@@ -16,7 +14,7 @@ import TimeSelector from '@/common/components/FormElements/TimeSelector';
 
 function BookingPanel({item, pickUpDateTime, returnDateTime}) {
 
-
+  const router = useRouter()
 
   const { register, handleSubmit, getValues } = useForm({
     defaultValues: {
@@ -50,6 +48,8 @@ function BookingPanel({item, pickUpDateTime, returnDateTime}) {
     setStartDate(ranges.selection.startDate)
     setEndDate(ranges.selection.endDate)
 
+    // setDuration(calcDuration())
+
   }
 
   const calcDuration = () => {
@@ -73,7 +73,7 @@ function BookingPanel({item, pickUpDateTime, returnDateTime}) {
     let priceEstimate
     if (item.rentPerHour) {
       priceEstimate = Math.ceil(duration) * item.rentPerHourPrice
-      setRate(`$${item.rentPerHourPrice} per Hour`)
+      setRate(`$${item.rentPerHourPrice} per Hour for ${Math.ceil(duration)} hours`)
     } 
     
     if (item.rentPerDay){
@@ -85,7 +85,7 @@ function BookingPanel({item, pickUpDateTime, returnDateTime}) {
     } 
     
     if (item.rentPerWeek){
-      priceEstimate2 = Math.ceil(duration / 24 / 7) * item.rentPerWeekPrice 
+      let priceEstimate2 = Math.ceil(duration / 24 / 7) * item.rentPerWeekPrice 
       if (priceEstimate2 <= priceEstimate) {
         setRate(`$${item.rentPerWeekPrice} per Week for ${Math.ceil(duration / 24 / 7)} weeks`)
         priceEstimate = priceEstimate2
@@ -97,44 +97,23 @@ function BookingPanel({item, pickUpDateTime, returnDateTime}) {
 
   useEffect(() => {
     setDuration(calcDuration())
+  }, [endDate])
+
+  useEffect(() => {
     setPrice(calcPrice())
+  }, [duration])
 
-  }, [])
 
-  const calcEndTime = (duration) => {
 
-    let timeToBeAdded = bookingDurationMilliSecondMap[duration]
-    // console.log(timeToBeAdded)
-    let pickUpTime = startDate.setHours(getValues('pickUpTime').split(':')[0], getValues('pickUpTime').split(':')[1])
-    // console.log(pickUpTime)
-    let returnTimeMS = pickUpTime + timeToBeAdded
-    // console.log(returnTimeMS)
-    let returnTime = new Date(returnTimeMS)
-    // console.log(returnTime)
-    let returnTimeString = returnTime.toLocaleTimeString(undefined, {
-      hour:   '2-digit',
-      minute: '2-digit',
-    })
-    // returnTime.getHours().toFixed(2).toString().concat(':', returnTime.getMinutes().toFixed(2).toString())
-    // console.log(returnTimeString)
-    setValue('returnTime', returnTimeString)
-    setEndDate(returnTime)
+
+  const pickUpTimeOnChangeHandler = (event) => {
+    register('pickUpTime').onChange(event)
+    setDuration(calcDuration())
   }
 
-  const durationChangeHandler = (event) => {
-    register('duration').onChange(event)
-    calcEndTime(event.target.value)
-  }
-
-  const pickUpTimeBlurHandler = (event) => {
-    register('pickUpTime').onBlur(event)
-    // const duration = getValues('duration') 
-    // console.log(duration)
-    // console.log(bookingDurationMilliSecondMap[duration])
-    // if (bookingDurationMilliSecondMap[duration]) {
-
-    //   calcEndTime(duration)
-    // }
+  const returnOnChangeHandler = (event) => {
+    register('returnTime').onChange(event)
+    setDuration(calcDuration())
   }
 
 
@@ -143,9 +122,7 @@ function BookingPanel({item, pickUpDateTime, returnDateTime}) {
 
     console.log(bookingData)
 
-    calcDuration()
 
-    // delete bookingData.duration
 
     // two ways of getting time with date as datetime
     bookingData.pickUpTime = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), bookingData.pickUpTime.split(':')[0], bookingData.pickUpTime.split(':')[1] )
@@ -156,6 +133,7 @@ function BookingPanel({item, pickUpDateTime, returnDateTime}) {
 
     bookingData.pickUpTime = bookingData.pickUpTime.toISOString()
     bookingData.returnTime = bookingData.returnTime.toISOString()
+
 
 
     console.log('bookingData2')
@@ -177,7 +155,13 @@ function BookingPanel({item, pickUpDateTime, returnDateTime}) {
       
     //   const newBookingId = data.id
 
-    //   router.push(`/users/${userIdTemp}/bookings`)
+      router.push({
+        pathname: `/${item.id}/book`,
+        query: {
+          pickUpDateTime: bookingData.pickUpTime,
+          returnDateTime: bookingData.returnTime
+        }
+      })
     // } catch (err){
     //   console.log(err)
     // }                                        
@@ -195,22 +179,6 @@ function BookingPanel({item, pickUpDateTime, returnDateTime}) {
       </div>
       <form id='booking-panel' className='flex flex-col' onSubmit={handleSubmit(onSubmit)}>
 
-        {/* <Input 
-          id="pickUpTime"
-          element="input"
-          type="text"
-          label="Pick Up Time?"
-          validators={[VALIDATOR_REQUIRE()]}
-          errorText="Please enter a valid time"
-          // initialValue={escort.pickUpTime}
-          // initialValid={true}
-          name={register('pickUpTime').name}
-          formOnChange={register('pickUpTime').onChange}
-          formOnBlur={pickUpTimeBlurHandler}
-          inputRef={register('pickUpTime').ref} 
-          variant='short'
-        /> */}
-
         <TimeSelector
           id="pickUpTime"
           label="Pick Up Time?"
@@ -219,8 +187,8 @@ function BookingPanel({item, pickUpDateTime, returnDateTime}) {
           // initialValue={escort.pickUpTime}
           // initialValid={true}
           name={register('pickUpTime').name}
-          formOnChange={register('pickUpTime').onChange}
-          formOnBlur={pickUpTimeBlurHandler}
+          formOnChange={pickUpTimeOnChangeHandler}
+          formOnBlur={register('pickUpTime').onBlur}
           inputRef={register('pickUpTime').ref} 
         />
 
@@ -232,28 +200,11 @@ function BookingPanel({item, pickUpDateTime, returnDateTime}) {
           // initialValue={escort.returnTime}
           // initialValid={true}
           name={register('returnTime').name}
-          formOnChange={register('returnTime').onChange}
+          formOnChange={returnOnChangeHandler}
           formOnBlur={register('returnTime').onBlur}
           inputRef={register('returnTime').ref} 
           variant='short'
         />
-
-        {/* <Input 
-          id="returnTime"
-          element="input"
-          type="text"
-          label="Drop off time"
-          validators={[VALIDATOR_REQUIRE()]}
-          errorText="Please enter a valid time"
-          // initialValue={escort.returnTime}
-          // initialValid={true}
-          name={register('returnTime').name}
-          formOnChange={register('returnTime').onChange}
-          formOnBlur={register('returnTime').onBlur}
-          inputRef={register('returnTime').ref} 
-          variant='short'
-        /> */}
-
 
         <div className='flex flex-row justify-between' >
           <div className='' >
@@ -266,6 +217,7 @@ function BookingPanel({item, pickUpDateTime, returnDateTime}) {
         
       </form>
       <ButtonMain type='submit' formId='booking-panel'>Book</ButtonMain>
+
     </div>
   )
 }

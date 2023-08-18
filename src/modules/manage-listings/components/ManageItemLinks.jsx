@@ -8,8 +8,6 @@ function ManageItemLinks() {
 
   const { asPath } = useRouter()
 
-  console.log('asPath')
-  console.log(asPath.includes('item-details'))
 
   const notSelectedClassNames = 'block w-full h-full text-center py-1 border border-gray-400 rounded-t-md hover:bg-gray-200'
   const isSelectedClassNames = 'block w-full h-full text-center py-1 border border-gray-400 rounded-t-md bg-gray-200'
