@@ -2,8 +2,9 @@
 import React, { useContext, useState } from 'react'
 import { prisma } from '@/database/db'
 import ItemCardListings from '@/modules/manage-listings/components/ItemCardListings'
-import NavBarManageListings from '@/modules/manage-listings/components/NavbarManageListings'
+import NavBarManageListings from '@/modules/renters-profile/components/NavbarRentersProfile'
 import { UserContext } from '@/common/contexts/user-context'
+import NavBarRentersProfile from '@/modules/renters-profile/components/NavbarRentersProfile'
 
 
 function Bookings({items}) {
@@ -25,10 +26,10 @@ function Bookings({items}) {
 
   return (
     <>
-      <NavBarManageListings />
+      <NavBarRentersProfile />
       <main>
-        <div className='medium-container flex-1 overflow-auto'>
-          <h1>Listings for {accountName}</h1>
+        <div className='small-container max-w-[750px] flex-1 overflow-auto'>
+          <h1 className='heading'>Listings for {accountName}</h1>
 
 
             <div className='h-fit w-full border' >
@@ -55,7 +56,7 @@ function Bookings({items}) {
               </label>
              
 
-              <div className='flex flex-col space-y-4 h-fit'>
+              <div className='flex flex-col space-y-5 h-fit mt-8'>
                 {items.map((item) => (
                   (display.active && item.active || (display.inactive && !item.active)) &&
                   <ItemCardListings key={item.id} item={item} />
@@ -74,9 +75,7 @@ export default Bookings
 
 export async function getServerSideProps(context) {
 
-  let accountId = 2
-// change this to auth
-  let userRenterId = 5
+
 
   // const escortId = JSON.parse(context.params.escortId)
   console.log("getting ssP's")
@@ -90,13 +89,21 @@ export async function getServerSideProps(context) {
 
   const items = await prisma.item.findMany({
     where: {
-      ownersRenterId: userRenterId
+      ownersRenterId: JSON.parse(context.params.userRenterId)
     },
     select: {
       id: true,
       createdAt: true,
       updatedAt: true,
       name: true,
+      itemPhotos: {
+        where: {
+          order: 1
+        },
+        select: {
+          imageUrl: true
+        }
+      },
       active: true,
       rentPerHour: true,   
       rentPerHourPrice: true,

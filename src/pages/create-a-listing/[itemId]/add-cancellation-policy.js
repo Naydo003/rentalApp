@@ -106,7 +106,7 @@ function AddCancellationPolicy() {
     <div className='h-screen flex flex-col'>
       <NavBarCreateItem />
       <div className='w-full h-fit flex-1 overflow-auto' >
-        <div className='medium-container'>
+        <div className='small-container'>
           {/* <h1 className='heading'>Select your cancellation policy for {itemName}</h1>
           <p className='secondary-text mb-5'>You may add a general cancellation policy and a late cancellation policy</p> */}
 

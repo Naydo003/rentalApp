@@ -11,7 +11,7 @@ export default async function handler(req, res) {
         itemAgreedLateCancelationPolicyTime,
         itemAgreedLateCancelationPolicyCharge,
         agreedDeposit,
-        expectedtransactionCost,
+        expectedTransactionCost,
         customCancellationPolicy,
         itemAgreedLateReturnPolicy,
         customLateReturnPolicy,
@@ -36,7 +36,7 @@ export default async function handler(req, res) {
             itemAgreedLateCancelationPolicyTime,
             itemAgreedLateCancelationPolicyCharge,
             agreedDeposit,
-            expectedtransactionCost,
+            expectedTransactionCost,
             customCancellationPolicy,
             itemAgreedLateReturnPolicy,
             customLateReturnPolicy,
@@ -55,82 +55,27 @@ export default async function handler(req, res) {
 
       break
 
-    case 'PATCH':
-
-
-      console.log('PAATCHHHHHHHHHHH')
-      console.log(req.body)
-
-
-      console.log('PAATCHHHHHHHHHHH 2222222')
-      console.log(req.body)
-      // console.log(req.files)
-  
-  
-      const { updateData } = req.body
-      const itemId  = req.body.itemId
-      
-      
-      try {const updatedItem = await prisma.item.update({
-        where: {
-          id: itemId
-        },
-        data: {
-          name: updateData.newName,
-          pickUpAddress,
-          locationCoordinates,
-          category,
-          description,
-          brand,
-          model,
-          age,
-          importantNote,
-          size,
-          goodForIndicator,
-          specialItem,
-          carMake: make,
-          yearOfManufacture: year,
-          odometer,
-          clothingLabel: label,
-          bookAuthor: author,
-          bookGenre: genre,
-          condition,
-          itemPhotos: itemPhotos && {
-            createMany: {
-              data: itemPhotos
-            }
+      case 'PATCH':
+        console.log("PATCH")
+        console.log(req.body)
+        
+        let { bookingId, updateData } = req.body       // will need a way to auth that escort sent req 
+        
+        try {const updatedBooking = await prisma.booking.update({
+          where: {
+            id: bookingId
           },
-          active,
-          itemNewValue,
-          rentPerHour,
-          rentPerHourPrice,
-          rentPerDay,
-          rentPerDayPrice,
-          rentPerWeek,
-          rentPerWeekPrice,
-          minimumRentalPeriod,
-          weekendRentPerHour, 
-          weekendRentPerHourPrice, 
-          weekendRentPerDay, 
-          weekendRentPerDayPrice, 
-          weekendMinimumRentalPeriod,
-          generalCancellationPolicy, 
-          lateCancellationPolicyTime, 
-          lateCancellationPolicyCharge, 
-          customCancellationPolicy,
-          lateReturnPolicy,
-          reviews,
-          bookings,
-          insuranced,
-          hasClaims
-        },
-      }
-      ) 
-      res.status(201).json(updatedItem)
-      } catch (err) {
-        console.log(err)
-      }
-      break
+          data: {
+            ...updateData
+          },
+        }) 
+        res.status(201).json(updatedBooking)
+        } catch (err) {
+          console.log(err)
+          res.status(500).json({error: err.message})
+        }
+        break
+        
     default:
       res.setHeader('Allow', ['POST', 'PATCH'])
   }

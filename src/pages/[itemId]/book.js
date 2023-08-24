@@ -4,13 +4,15 @@ import NavBarSearch from '@/modules/rentee-booking/NavBarSearch'
 import axios from 'axios'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { prisma } from '@/database/db'
 import ButtonMain from '@/common/ButtonMain'
+import { UserContext } from '@/common/contexts/user-context'
 
 
 function book({item}) {
+  const { userRenteeId } = useContext(UserContext)
   const router = useRouter()
   const [ pickUpDateTime, setPickUpDateTime ] = useState(new Date(router.query.pickUpDateTime))
   const [ returnDateTime, setReturnDateTime ] = useState(new Date(router.query.returnDateTime))
@@ -34,6 +36,21 @@ function book({item}) {
       })
     }
   })
+
+  const prices = {
+    rentPerHour: item.rentPerHour, 
+    rentPerHourPrice: item.rentPerHourPrice, 
+    rentPerDay: item.rentPerDay, 
+    rentPerDayPrice: item.rentPerDayPrice, 
+    rentPerWeek: item.rentPerWeek, 
+    rentPerWeekPrice: item.rentPerWeekPrice, 
+    minimumRentalPeriod: item.minimumRentalPeriod, 
+    weekendRentPerHour: item.weekendRentPerHour, 
+    weekendRentPerHourPrice: item.weekendRentPerHourPrice, 
+    weekendRentPerDay: item.weekendRentPerDay, 
+    weekendRentPerDayPrice: item.weekendRentPerDayPrice, 
+    weekendMinimumRentalPeriod: item.weekendMinimumRentalPeriod, 
+  }
   
   const onSubmit = async (bookingData) => {
     console.log("********onsubmit triggered******")
@@ -43,7 +60,7 @@ function book({item}) {
     bookingData.itemAgreedLateCancelationPolicyTime = item.lateCancellationPolicyTime,
     bookingData.itemAgreedLateCancelationPolicyCharge = item.lateCancellationPolicyCharge,
     bookingData.agreedDeposit = item.deposit,
-    bookingData.expectedtransactionCost = agreedPrice,
+    bookingData.expectedTransactionCost = agreedPrice,
     bookingData.customCancellationPolicy = item.customCancellationPolicy,
     bookingData.itemAgreedLateReturnPolicy = item.lateReturnPolicy,
     bookingData.customLateReturnPolicy = item.customLateReturnPolicy,
@@ -54,7 +71,7 @@ function book({item}) {
 
     console.log(bookingData)
 
-    const userRenteeId = 2
+
 
     try {
       const result = await axios.post('/api/booking', { bookingData, itemId: item.id, userRenteeId: userRenteeId })
@@ -78,7 +95,7 @@ function book({item}) {
     )}
     <NavBarSearch />
     <main>
-      <div className='large-container flex-1 overflow-auto'>
+      <div className='xl-container flex-1 overflow-auto'>
         
         <div className='border-red-600 border-4 relative'>
 
@@ -167,14 +184,37 @@ function book({item}) {
             <div className='my-4'>
               
               <h3 className='subheading'>Late Return Policy</h3>
-              <p className=''>{lateReturnPolicyTitleMap[item.lateReturnPolicy]}</p>
+              
+              {item.lateReturnPolicy === 'customPolicy' ? (
+                <>
+                  <p className='secondary-text'>This items has a custom late return policy which is not managed by xxxx. Please read it carefully</p>
+                  <p className='primary-text'>Custom Policy: {item.customLateReturnPolicy}</p>
+                </>
+              ) : (
+                <p className=''>{lateReturnPolicyTitleMap[item.lateReturnPolicy]}</p>
+              )}
 
 
             </div>
-            <ButtonMain type='submit' formId='booking-form' >Book</ButtonMain>
+            <div className='flex flex-row justify-center' >
+              <ButtonMain classNames='w-32' type='submit' formId='booking-form' >Book</ButtonMain>
+            </div>
+            
           </div>
-          <div className='col-span-2 border border-black p-4'>
-            <BookingPanel2 item={item} pickUpDateTime={pickUpDateTime} returnDateTime={returnDateTime} setAgreedRate={setAgreedRate} setAgreedPrice={setAgreedPrice} />
+          <div className='col-span-2 border border-mainBlack-100 p-4'>
+            <BookingPanel2 
+              item={{
+                name: item.name,
+                category: item.category,
+                condition: item.condition,
+                itemPhotos: item.itemPhotos,
+              }} 
+              prices={prices}
+              pickUpDateTime={pickUpDateTime} 
+              returnDateTime={returnDateTime} 
+              setAgreedRate={setAgreedRate} 
+              setAgreedPrice={setAgreedPrice} 
+            />
           </div>
         </div>
       </div>

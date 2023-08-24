@@ -28,7 +28,7 @@ function AddItemSummary() {
     <div className='h-screen flex flex-col'>
       <NavBarCreateItem />
       <div className='w-full h-fit flex-1 overflow-auto' >
-        <div className='medium-container'>
+        <div className='small-container'>
           <h1 className='heading'>Please review the details for {itemName}. If you confirm this item will be added to your Rented Items Manager where you can fill out a calendar of when the item is available and then activate the advert.</h1>
 
         </div>

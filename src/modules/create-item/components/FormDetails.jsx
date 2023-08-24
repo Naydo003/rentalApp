@@ -8,7 +8,11 @@ function FormDetails({category, nextRoute }) {
 
   let router = useRouter()
   let { itemId, itemName } = useContext(ItemContext)      // change to const
-  const { register, handleSubmit } = useForm()
+  const { register, handleSubmit } = useForm({
+    defaultValues: {
+      name: itemName
+    }
+  })
   const accountId = 2
  // change this to context maybs
 
@@ -20,12 +24,11 @@ function FormDetails({category, nextRoute }) {
 
     try {
       const result = await axios.patch('/api/items', { updateData, itemId })
-    console.log("********result******")
-    console.log(result)
+      console.log("********result******")
+      console.log(result)
 
-    
-    nextRoute ? router.push(nextRoute) : router.push(`/create-a-listing/${itemId}/add-condition`)
-
+      nextRoute ? router.push(nextRoute) : router.push(`/create-a-listing/${itemId}/add-condition`)
+      
     } catch (err){
       console.log(err)
     }                                               // may be able to use single try catch here.

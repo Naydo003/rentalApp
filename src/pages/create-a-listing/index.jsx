@@ -20,7 +20,7 @@ function CreateAListing() {
 
       <div className='h-screen flex flex-col'>
         <NavBarCreateItem />
-        <div className='medium-container flex-1 overflow-auto'>
+        <div className='small-container flex-1 overflow-auto'>
           <h1 className='heading'>Become A Renter</h1>
           <NewItemForm />
           <button onClick={() => seed(10, userRenterId, accountId)} >Seed DataBase 10</button>

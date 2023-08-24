@@ -306,7 +306,7 @@ model Booking {
   itemAgreedLateCancelationPolicyTime   CancellationPolicyTime?
   itemAgreedLateCancelationPolicyCharge  CancellationPolicyCharge?
   agreedDeposit             Decimal?   @db.Decimal(7, 2)
-  expectedtransactionCost       Decimal   @db.Decimal(7, 2)
+  expectedTransactionCost       Decimal   @db.Decimal(7, 2)
   customCancellationPolicy      String?   @db.VarChar(800)
   itemAgreedLateReturnPolicy    LateReturnPolicy?
   customLateReturnPolicy        String?     @db.VarChar(800)
@@ -336,9 +336,9 @@ enum BookingStatus {
   modRequestedByUser
   modRequestOrCancelByUser
   cancelledByUser
-  modRequestedByEscort
-  modRequestOrCancelByEscort
-  cancelledByEscort
+  modRequestedByOwner
+  modRequestOrCancelByOwner
+  cancelledByOwner
   inProgress
   completed
   closed
@@ -353,7 +353,7 @@ model BookingModDetails {
   updatedAt                 DateTime?   @updatedAt
   itemAgreedRate            Decimal?    @db.Decimal(7, 2)
   agreedDeposit             Decimal?    @db.Decimal(7, 2)
-  expectedtransactionCost   Decimal?    @db.Decimal(7, 2)
+  expectedTransactionCost   Decimal?    @db.Decimal(7, 2)
   pickUpTime                DateTime?
   returnTime                DateTime?
   renterNote                String?
@@ -454,7 +454,6 @@ model RenteeReview {
   userRenterId    Int
   aboutRentee     UserRenteeProfile   @relation(fields: [userRenteeId], references: [id])
   userRenteeId    Int
-
   createdAt DateTime @default(now())
   rating    Rating
   publicComment   String?

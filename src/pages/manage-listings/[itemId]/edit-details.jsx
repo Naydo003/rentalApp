@@ -1,11 +1,12 @@
 
 import React, { useContext, useState } from 'react'
 import ItemCardListings from '@/modules/manage-listings/components/ItemCardListings'
-import NavBarManageListings from '@/modules/manage-listings/components/NavbarManageListings'
+import NavBarManageListings from '@/modules/renters-profile/components/NavbarRentersProfile'
 import { UserContext } from '@/common/contexts/user-context'
 import FormDetails from '@/modules/create-item/components/FormDetails'
 import CategorySelector from '@/common/components/UIElements/CategorySelector'
 import ButtonGeneral from '@/common/ButtonGeneral'
+import NavBarRentersProfile from '@/modules/renters-profile/components/NavbarRentersProfile'
 
 
 function EditDetails({item}) {
@@ -19,9 +20,9 @@ function EditDetails({item}) {
 
   return (
     <>
-      <NavBarManageListings />
+      <NavBarRentersProfile />
       <main>
-        <div className='medium-container flex-1 overflow-auto'>
+        <div className='small-container flex-1 overflow-auto'>
           <h1>Edit details for {item.name}</h1>
 
           <h1 className='heading'>Select a category for {item.name}</h1>

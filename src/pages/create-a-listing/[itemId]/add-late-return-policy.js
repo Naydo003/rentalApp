@@ -52,7 +52,7 @@ function AddLateReturnPolicyPage() {
     <div className='h-screen flex flex-col'>
       <NavBarCreateItem />
       <div className='w-full h-fit flex-1 overflow-auto' >
-        <div className='medium-container'>
+        <div className='small-container'>
           <h1 className='heading'>Which late return policy would you like for {itemName}?</h1>
 
           <form id='add-late-return-policy-form' className='flex flex-col' onSubmit={handleSubmit(onSubmit)}> 

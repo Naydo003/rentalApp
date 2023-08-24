@@ -16,7 +16,7 @@ import { categoriesTitleMap, conditionTitleMap } from '@/common/utilities/enumer
 
 
 
-function BookingPanel2({item, pickUpDateTime, returnDateTime, setAgreedPrice, setAgreedRate}) {
+function BookingPanel2({item, prices, pickUpDateTime, returnDateTime, setAgreedPrice, setAgreedRate}) {
 
   const router = useRouter()
 
@@ -41,7 +41,7 @@ function BookingPanel2({item, pickUpDateTime, returnDateTime, setAgreedPrice, se
               src={item.itemPhotos[0].imageUrl}
               className="object-cover -z-10"
               fill
-              alt='escort image'
+              alt='item image'
             />
   
           </div>
@@ -66,7 +66,7 @@ function BookingPanel2({item, pickUpDateTime, returnDateTime, setAgreedPrice, se
         
       </div>
 
-      <PriceCalc item={item} pickUpDateTime={pickUpDateTime} returnDateTime={returnDateTime} setAgreedRate={setAgreedRate} setAgreedPrice={setAgreedPrice} />
+      <PriceCalc prices={prices} pickUpDateTime={pickUpDateTime} returnDateTime={returnDateTime} setAgreedRate={setAgreedRate} setAgreedPrice={setAgreedPrice} />
     </div>
   )
 }

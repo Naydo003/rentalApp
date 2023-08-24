@@ -2,7 +2,7 @@ import { prisma } from '@/database/db'
 import React, { useContext, useState } from 'react'
 import Image from 'next/image';
 import ButtonGeneral from '@/common/ButtonGeneral';
-import NavBarManageListings from '@/modules/manage-listings/components/NavbarManageListings';
+import NavBarManageListings from '@/modules/renters-profile/components/NavbarRentersProfile';
 import { useRouter } from 'next/router';
 import { ItemContext } from '@/common/contexts/item-context';
 import ActivateItemModal from '@/modules/manage-listings/components/ActivateItemModal';
@@ -13,6 +13,7 @@ import { rentalPeriodsTitleMap, conditionTitleMap, categoriesTitleMap, goofForIn
 import ChangeCancellationPolicyModal from '@/modules/manage-listings/components/ChangeCancellationPolicyModal';
 import LateReturnPolicyModal from '@/modules/manage-listings/components/LateReturnPolicyModal';
 import ManageItemLinks from '@/modules/manage-listings/components/ManageItemLinks';
+import NavBarRentersProfile from '@/modules/renters-profile/components/NavbarRentersProfile';
 
 function ItemDetails({item}) {
   const [ modalContent, setModalContent ] = useState(null)
@@ -63,9 +64,9 @@ function ItemDetails({item}) {
           {modalContent}
         </Modal>
       )}
-      <NavBarManageListings />
+      <NavBarRentersProfile />
       <main>
-        <div className='medium-container flex-1 overflow-auto'>
+        <div className='small-container flex-1 overflow-auto'>
           <ManageItemLinks />
           <div className='border-red-600 border-4 relative'>
           <div className='my-4 flex flex-row justify-between' >

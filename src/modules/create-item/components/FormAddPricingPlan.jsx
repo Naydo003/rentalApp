@@ -23,10 +23,13 @@ function FormAddPricingPlan({setModalContent}) {
       rentPerDayPrice: 0.00,
       rentPerWeek: false,
       rentPerWeekPrice: 0.00,
+      minimumRentalPeriod: 'none',
       weekendRentPerHour: false,
       weekendRentPerHourPrice: 0.00 ,
       weekendRentPerDay: false,
-      weekendRentPerDayPrice: 0.00
+      weekendRentPerDayPrice: 0.00,
+      weekendMinimumRentalPeriod: 'none',
+
     }
   })
   
@@ -42,7 +45,7 @@ function FormAddPricingPlan({setModalContent}) {
     if (!isChecked5) {
       updateData.weekendRentPerHourPrice = 0
       updateData.weekendRentPerDayPrice = 0
-      updateData.weekendMinimumRentalPeriod = 'noMinimum'
+      updateData.weekendMinimumRentalPeriod = 'none'
     }
 
     if (updateData.rentPerHour && updateData.rentPerHourPrice == 0) {

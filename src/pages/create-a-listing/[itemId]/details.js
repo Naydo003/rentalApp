@@ -44,7 +44,7 @@ function details() {
     <div className='h-screen flex flex-col'>
       <NavBarCreateItem />
       <div className='w-full h-fit flex-1 overflow-auto' >
-        <div className='medium-container'>
+        <div className='small-container'>
 
           <h1 className='heading'>Select a category for {itemName}</h1>
 

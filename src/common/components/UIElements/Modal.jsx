@@ -26,7 +26,7 @@ function Modal({ children, isOpen, handleClose }) {
     <ReactPortal>
       <>
         <div className='fixed top-0 left-0 w-screen h-screen z-40 bg-neutral-800 opacity-50' />
-        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 w-fit p-10 max-w-[800px] bg-slate-300">
+        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 w-fit p-10 max-w-[800px] bg-white">
         {/* <div className="fixed rounded w-80 h-80 flex flex-col min-w-fit overflow-hidden p-5 bg-zinc-800 inset-y-32 inset-x-32"> */}
           <div>
             <button onClick={handleClose} className="">

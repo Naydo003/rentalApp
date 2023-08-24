@@ -19,6 +19,7 @@
     "@next/font": "13.1.1",
     "@prisma/client": "^4.8.1",
     "@react-google-maps/api": "^2.18.1",
+    "@tailwindcss/line-clamp": "^0.4.4",
     "axios": "^1.2.2",
     "cloudinary": "^1.33.0",
     "datauri": "^4.1.0",

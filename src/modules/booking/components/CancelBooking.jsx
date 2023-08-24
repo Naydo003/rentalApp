@@ -79,7 +79,7 @@ function CancelBooking({booking, setStatus, setModalContent }) {
   return (
     <>
       <main>
-        <div className='medium-container flex-1 overflow-auto'>
+        <div className='small-container flex-1 overflow-auto'>
           <h1>You are about to cancel the booking on {bookingDate} of {booking.item?.name || booking.renter?.name}</h1>
 
 

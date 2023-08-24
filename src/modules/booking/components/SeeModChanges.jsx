@@ -130,7 +130,7 @@ function SeeModChanges({booking, modDetails, setStatus, setModalContent, setModD
     let modifiedBookingData = {
       itemAgreedRate: modDetails.itemAgreedRate,
       agreedDeposit: modDetails.agreedDeposit,
-      expectedtransactionCost: modDetails.expectedtransactionCost,
+      expectedTransactionCost: modDetails.expectedTransactionCost,
       startTime: modDetails.startTime,
       endTime: modDetails.endTime,
       duration: modDetails.duration,
@@ -149,7 +149,7 @@ function SeeModChanges({booking, modDetails, setStatus, setModalContent, setModD
     let modificationDetailsData = {
       itemAgreedRate: modDetails.itemAgreedRate ? booking.itemAgreedRate : null,
       agreedDeposit: modDetails.agreedDeposit ? booking.agreedDeposit : null,
-      expectedtransactionCost: modDetails.expectedtransactionCost ? booking.expectedtransactionCost : null,
+      expectedTransactionCost: modDetails.expectedTransactionCost ? booking.expectedTransactionCost : null,
       startTime: modDetails.startTime ? booking.startTime : null,
       endTime: modDetails.endTime ? booking.endTime : null,
       duration: modDetails.duration ? booking.duration : null,
@@ -274,8 +274,8 @@ function SeeModChanges({booking, modDetails, setStatus, setModalContent, setModD
       {modDetails.agreedDeposit && (
         <p className='' >Agreed Deposit from {booking.agreedDeposit } to {modDetails.agreedDeposit} </p>
       )}
-      {modDetails.expectedtransactionCost && (
-        <p className='' >Expected Transaction Cost from {booking.expectedtransactionCost } to {modDetails.expectedtransactionCost} </p>
+      {modDetails.expectedTransactionCost && (
+        <p className='' >Expected Transaction Cost from {booking.expectedTransactionCost } to {modDetails.expectedTransactionCost} </p>
       )}
 
       {modDetails.pickUpTime && startTimeComment}

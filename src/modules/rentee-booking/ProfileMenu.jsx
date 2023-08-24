@@ -1,42 +1,63 @@
 import { UserContext } from '@/common/contexts/user-context'
 import Link from 'next/link'
-import React, { useContext, useState } from 'react'
+import React, { forwardRef, useContext, useEffect, useRef, useState } from 'react'
 
 
-function ProfileMenu() {
-  const [ isOpen, setIsOpen ] = useState(false)
-  const { setAccountId, setAccountName, setUserRenteeId, setUserRenterId} = useContext(UserContext)
+const ProfileMenu = forwardRef(( props, ref ) => {
+  const { accountId, setAccountId, setAccountName, userRenteeId, setUserRenteeId, userRenterId, setUserRenterId, setProfileImage } = useContext(UserContext)
+  const menuRef = useRef()
+  const {isOpen, setIsOpen} = props
+  // console.log(menuButtonRef.current)
+
+  useEffect(() => {
+
+    const closeMenu = (e) => {
+
+      console.log(e.target)
+
+      if (!ref.current.contains(e.target) && e.target !== menuRef.current) {
+      setIsOpen(false)
+      document.body.removeEventListener('click', closeMenu)
+      }
+    }
+
+    document.body.addEventListener('click', closeMenu)
+
+    return () => document.body.removeEventListener('click', closeMenu)
+    
+  }, [])
 
   const setUserContext = () => {
     setAccountId(15)
     setAccountName('Jimmy')
     setUserRenteeId(11)
     setUserRenterId(11)
+    setProfileImage('https://images.unsplash.com/photo-1611145434336-2324aa4079cd?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=930&q=80')
 
     console.log('user context set to Jimmy AccId=15 RenteeId=11 RenterId=11')
   }
 
   return (
     <>
-      <div className='h-[20px] w-[20px] sm:w-[45px] justify-center border border-black rounded-full' onClick={() => setIsOpen(!isOpen)}>
-      
-      </div>
 
       {isOpen &&
-        <div className='absolute top-[80px] right-5 w-60 h-60 border border-black p-5' >
+        <div ref={menuRef} className='absolute top-[80px] right-0 w-60 h-60 border border-mainBlack-100 bg-white p-5 z-10' >
           <Link className='font-semibold mb-5 block' href='/user/sign-up'>Sign Up</Link>
           <Link className='font-semibold block pb-5 border-b border-gray-500' href='/user/sign-up'>Login</Link>
 
-          <div className='' onClick={setUserContext} >
+          <div className='mt-2 cursor-pointer' onClick={setUserContext} >
             Set User Context
           </div>
-          
+
+          <Link className='font-semibold block my-2' href={`/renters-profile/${userRenterId}/manage-listings`} >Manage Listings</Link>
+          <Link className='font-semibold block ' href={`/user/${userRenteeId}/bookings`} >My Bookings</Link>
+          <Link className='font-semibold block my-2' href={`/user/${accountId}/account-settings`}>My Account</Link>
 
         </div>
       }
     </>
     
   )
-}
+})
 
 export default ProfileMenu

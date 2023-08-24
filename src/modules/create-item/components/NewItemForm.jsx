@@ -39,15 +39,14 @@ function NewItemForm() {
 
     try {
       const { data } = await axios.post('/api/items', { newItemData, userRenterId: renterId })
-      const newId = data.id
-      await setItemId(newId)
       
-      if (!newId) {
+      if (!data.id) {
         console.log("no itemId")
         return
       }
+      setItemId(data.id)                 // 
       setItemName(data.name)
-      router.push(`/create-a-listing/${newId}/overview`)
+      router.push(`/create-a-listing/${data.id}/overview`)
     } catch (err){
       console.log(err)
     }                                               // may be able to use single try catch here.

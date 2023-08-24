@@ -7,6 +7,8 @@ export const UserContext = createContext({
   setAccountName: () => {},
   accountEmail: null,
   setAccountEmail: () => {},
+  profileImage: null,
+  setProfileImage: () => {},
   userRenterId: null,
   setUserRenterId: () => {},
   userRenteeId: null,
@@ -18,8 +20,9 @@ export const UserProvider = ({children}) => {
   const [ accountId, setAccountId ] = useState(null)
   const [ accountName, setAccountName ] = useState(null)
   const [ accountEmail, setAccountEmail ] = useState(null)
+  const [ profileImage, setProfileImage ] = useState(null)
   const [ userRenterId, setUserRenterId ] = useState(null)
   const [ userRenteeId, setUserRenteeId ] = useState(null)
 
-  return <UserContext.Provider value={{ accountId, setAccountId, accountName, setAccountName, accountEmail, setAccountEmail, userRenterId, setUserRenterId, userRenteeId, setUserRenteeId }} >{children}</UserContext.Provider>
+  return <UserContext.Provider value={{ accountId, setAccountId, accountName, setAccountName, accountEmail, setAccountEmail, profileImage, setProfileImage, userRenterId, setUserRenterId, userRenteeId, setUserRenteeId }} >{children}</UserContext.Provider>
 }

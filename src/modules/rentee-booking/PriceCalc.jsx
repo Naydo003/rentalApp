@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-function PriceCalc({item, pickUpDateTime, returnDateTime, setAgreedRate, setAgreedPrice}) {
+function PriceCalc({prices, pickUpDateTime, returnDateTime, setAgreedRate, setAgreedPrice}) {
   const calcDuration = () => {
   
     let duration = (returnDateTime - pickUpDateTime)/1000/60/60
@@ -20,26 +20,26 @@ function PriceCalc({item, pickUpDateTime, returnDateTime, setAgreedRate, setAgre
   
   const calcPrice = () => {
     let priceEstimate
-    if (item.rentPerHour) {
-      priceEstimate = Math.ceil(duration) * item.rentPerHourPrice
-      setRate(`$${item.rentPerHourPrice} per Hour for ${Math.ceil(duration)} hours`)
-      setAgreedRate(`${item.rentPerHourPrice}/Hour`)
+    if (prices.rentPerHour) {
+      priceEstimate = Math.ceil(duration) * prices.rentPerHourPrice
+      setRate(`$${prices.rentPerHourPrice} per Hour for ${Math.ceil(duration)} hours`)
+      setAgreedRate(`${prices.rentPerHourPrice}/Hour`)
     } 
     
-    if (item.rentPerDay){
-      let priceEstimate2 = Math.ceil(duration / 24) * item.rentPerDayPrice 
+    if (prices.rentPerDay){
+      let priceEstimate2 = Math.ceil(duration / 24) * prices.rentPerDayPrice 
       if (priceEstimate2 <= priceEstimate) {
-        setRate(`$${item.rentPerDayPrice} per Day for ${Math.ceil(duration / 24)} days`)
-        setAgreedRate(`${item.rentPerDayPrice}/Day`)
+        setRate(`$${prices.rentPerDayPrice} per Day for ${Math.ceil(duration / 24)} days`)
+        setAgreedRate(`${prices.rentPerDayPrice}/Day`)
         priceEstimate = priceEstimate2
       }
     } 
     
-    if (item.rentPerWeek){
-      let priceEstimate2 = Math.ceil(duration / 24 / 7) * item.rentPerWeekPrice 
+    if (prices.rentPerWeek){
+      let priceEstimate2 = Math.ceil(duration / 24 / 7) * prices.rentPerWeekPrice 
       if (priceEstimate2 <= priceEstimate) {
-        setRate(`$${item.rentPerWeekPrice} per Week for ${Math.ceil(duration / 24 / 7)} weeks`)
-        setAgreedRate(`${item.rentPerWeekPrice}/Week`)
+        setRate(`$${prices.rentPerWeekPrice} per Week for ${Math.ceil(duration / 24 / 7)} weeks`)
+        setAgreedRate(`${prices.rentPerWeekPrice}/Week`)
         priceEstimate = priceEstimate2
       }
     } 

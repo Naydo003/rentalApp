@@ -31,7 +31,7 @@ CREATE TABLE `BookingModDetails` (
     `updatedAt` DATETIME(3) NULL,
     `itemAgreedRate` DECIMAL(7, 2) NULL,
     `agreedDeposit` DECIMAL(7, 2) NULL,
-    `expectedtransactionCost` DECIMAL(7, 2) NULL,
+    `expectedTransactionCost` DECIMAL(7, 2) NULL,
     `pickUpTime` DATETIME(3) NULL,
     `returnTime` DATETIME(3) NULL,
     `renterNote` VARCHAR(191) NULL,

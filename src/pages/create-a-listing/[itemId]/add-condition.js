@@ -15,7 +15,7 @@ function AddConditionPage() {
     <div className='h-screen flex flex-col'>
       <NavBarCreateItem />
       <div className='w-full h-fit flex-1 overflow-auto' >
-        <div className='medium-container'>
+        <div className='small-container'>
           <h1 className='heading'>What condition is the item in?</h1>
 
           <FormAddCondition />

@@ -53,7 +53,7 @@ function AddPhotosPage() {
     <div className='h-screen flex flex-col'>
       <NavBarCreateItem />
       <div className='w-full h-fit flex-1 overflow-auto' >
-        <div className='medium-container'>
+        <div className='small-container'>
           <h1 className='heading'>Add some pictures</h1>
           <p className='secondary-text'>We suggest a couple of nice ones to start and finish with any highlighting the items condition. Max 8 photo's</p>
           {/* <form id='add-photos-form' className='flex flex-col' onSubmit={handleSubmit(onSubmit)}>  */}

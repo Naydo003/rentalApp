@@ -32,30 +32,32 @@ export default async function handler(req, res) {
       }
       break
 
-      case 'GET':
+      case 'PATCH':
 
-        console.log(req)
-        // const { name, email, phoneNumber, homeAddress } = req..userId
-
+      const { userData} = req.body
 
 
-        // try {const newAccount = await prisma.Account.create({
-        //   data: {
-        //     name,
-        //     email,
-        //     phoneNumber,
-        //     homeAddress
-        //   },
-        // }
-        // ) 
-        res.status(201).json(newItem)
-        // } catch (err) {
-        //   console.log(err)
-        // }
+      try {const updatedUser = await prisma.account.update({
+        where: {
+          id: req.body.accountId
+        },
+        data: {
+          name: userData.name,
+          email: userData.email,
+          phoneNumber: userData.phoneNumber,
+          homeAddress: userData.email,
+        },
+      }
+      ) 
+      res.status(201).json(updatedUser)
+      } catch (err) {
+        console.log(err)
+      }
+      break
 
 
     default:
-      res.setHeader('Allow', ['POST'])
+      res.setHeader('Allow', ['POST', 'PATCH'])
   }
 
 }

@@ -44,7 +44,7 @@ function AddInsurancePage() {
     <div className='h-screen flex flex-col'>
       <NavBarCreateItem />
       <div className='w-full h-fit flex-1 overflow-auto' >
-        <div className='medium-container'>
+        <div className='small-container'>
           <h1 className='heading'>Would you like insurance?</h1>
 
           <form id='add-insurance-form' className='' onSubmit={handleSubmit(onSubmit)}>

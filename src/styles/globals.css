@@ -44,14 +44,19 @@
      hover:bg-mainColour-100/70 hover:border-gray-500
   }
 
+  .small-main-button {
+    @apply px-4 w-fit border border-mainBlack-100 hover:bg-gray-200 rounded-lg text-mainBlack-100 cursor-pointer
+      hover:border-gray-500 text-sm
+  }
+
   .secondary-button {
     @apply px-6 py-3 w-full border-2 border-black rounded-lg text-black text-center cursor-pointer
      hover:border-gray-500 hover:border-4
   }
 
   .general-button {
-    @apply px-4 py-1 h-fit border border-gray-200 rounded-full text-mainBlack-100 cursor-pointer
-     hover:border-gray-500 hover:border-2
+    @apply px-4 py-1 h-fit border border-gray-600 rounded-full text-mainBlack-100 cursor-pointer
+     hover:bg-gray-100 hover:border-mainBlack-100
   }
 
   .content-button {
@@ -64,11 +69,19 @@
    border-black bg-gray-100
   }
 
-  .medium-container {
+  .small-container {
     @apply w-full max-w-[640px] px-5 py-5 sm:py-10 mx-auto
+  }
+
+  .medium-container {
+    @apply w-full max-w-[850px] px-5 py-5 sm:py-10 mx-auto
   }
   
   .large-container {
+    @apply w-full max-w-[1000px] px-5 py-5 sm:py-10 mx-auto
+  }
+
+  .xl-container {
     @apply w-full max-w-[1200px] px-5 py-5 sm:py-10 mx-auto
   }
   

@@ -15,6 +15,13 @@ const nextConfig = {
         port: '',
         // pathname: '/account123/**',
       },
+      {
+        // For seed images. Delete later.
+        protocol: 'https',
+        hostname: 'www.freeiconspng.com',
+        port: '',
+        // pathname: '/account123/**',
+      },
     ],
   },
   reactStrictMode: false,

@@ -1,6 +1,6 @@
 import React from 'react'
 
-import FormNewUser from '@/modules/user/components/NewUserForm'
+import FormNewUser from '@/modules/user-profile/components/NewUserForm'
 import NavBarSearch from '@/modules/rentee-booking/NavBarSearch'
 
 
@@ -12,7 +12,7 @@ function SignUp() {
       <NavBarSearch />
       <main>
         <div className='h-screen flex flex-col'>
-          <div className='medium-container flex-1 overflow-auto'>
+          <div className='small-container flex-1 overflow-auto'>
             <h1 className='heading'>Sign-up</h1>
             <FormNewUser />
           </div>

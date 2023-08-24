@@ -27,7 +27,7 @@ function Overview() {
 
     <div className='h-screen flex flex-col'>
       <NavBarCreateItem />
-      <div className='medium-container flex-1 overflow-auto'>
+      <div className='small-container flex-1 overflow-auto'>
         <h1 className='heading'>Overview</h1>
         <p>You are about to create {itemName}</p>
 

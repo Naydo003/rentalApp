@@ -70,7 +70,7 @@ function ItemAd({item}) {
       )}
       <NavBarSearch />
       <main>
-        <div className='large-container flex-1 overflow-auto'>
+        <div className='xl-container flex-1 overflow-auto'>
           
           <div className='border-red-600 border-4 relative'>
  
@@ -90,7 +90,7 @@ function ItemAd({item}) {
                       src={photo.imageUrl}
                       className="object-cover -z-10"
                       fill
-                      alt='escort image'
+                      alt='item image'
                     />
                     <p>{photo.id}</p>
   
@@ -201,7 +201,7 @@ function ItemAd({item}) {
 
               </div>
             </div>
-            <div className='border border-black p-4'>
+            <div className='border border-mainBlack-100 p-4'>
               <BookingPanel item={item} pickUpDateTime={new Date(2023,8,24,15,30,0)} returnDateTime={new Date(2023,8,25,21,30,0)}/>
             </div>
           </div>
@@ -221,12 +221,12 @@ export async function getServerSideProps(context) {
   console.log("context.params")
   console.log(context.params)
 
-  
+  const itemId = JSON.parse(context.params.itemId)
 
   console.log("getting ssP's")
   const item = await prisma.item.findUnique({
     where: {
-      id: JSON.parse(context.params.itemId),
+      id: itemId,
     },
     select: {
       id: true,

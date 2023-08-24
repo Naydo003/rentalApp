@@ -1,11 +1,10 @@
-import React, { useState } from "react";
-import Image from "next/image";
-import axios from "axios";
+import React, { useContext, useState } from "react";
 import FilePreview from "./FilePreview";
 import UploadIcon from '../../../../public/upload.svg'
+import { ItemContext } from "@/common/contexts/item-context";
 
 const DropZone = ({ data, dispatch }) => {
-  const itemId = 5
+  const { itemId } = useContext(ItemContext)
 
 
   // onDragEnter sets inDropZone to true
