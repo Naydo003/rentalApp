@@ -1,9 +1,9 @@
 import React, { useContext, useState } from 'react'
 import { prisma } from '@/database/db'
-import BookingCardUser from '@/modules/user-profile/components/BookingCardUser'
 import { useRouter } from 'next/router'
-import NavBarSearch from '@/modules/rentee-booking/NavBarSearch'
 import UserCalendar from '@/modules/user-profile/components/UserCalendar'
+import NavBarRentersProfile from '@/modules/renters-profile/components/NavbarRentersProfile'
+import BookingCardOwner from '@/modules/renters-profile/components/BookingCardOwner'
 
 function Bookings({bookings}) {
   const [ calendarView, setCalendarView] = useState(false)
@@ -32,10 +32,10 @@ function Bookings({bookings}) {
 
   return (
     <>
-      <NavBarSearch />
+      <NavBarRentersProfile />
       <main>
         <div className='small-container flex-1 overflow-auto'>
-          <h1 className='heading'>Bookings for {bookings[0]?.renter?.userAccount?.name}</h1>
+          <h1 className='heading'>Bookings for all your items</h1>
           <div>
 
             <button onClick={() => {setCalendarView(!calendarView)}}>{calendarView ? 'List View' : 'Calendar'}</button>
@@ -108,7 +108,7 @@ function Bookings({bookings}) {
               <div className='flex flex-col space-y-4 h-fit mt-10'>
                 {bookings.map((booking) => (
                   displayStatus[booking.status] === true &&
-                  <BookingCardUser key={booking.id} booking={booking} />
+                  <BookingCardOwner key={booking.id} booking={booking} />
                 ))}
               </div>
             </div>
@@ -125,7 +125,7 @@ export default Bookings
 
 export async function getServerSideProps(context) {
 
-  const userId = JSON.parse(context.params.userId)
+  const userRenterId = JSON.parse(context.params.userRenterId)
   console.log("getting ssP's")
 
   // const {query} = context
@@ -144,10 +144,10 @@ export async function getServerSideProps(context) {
   // }
 
 
-  const bookings = await prisma.booking.findMany({
+  const bookings = await prisma.booking.findMany({                     // REALLY NEEDS TO INVESTIGATE WHAT IS QUICKER, SEARCH IN BOOKINGS OR SEARCH USER THEN grab their bookings. I suspect the latter.
     where: {
       OR: keywordSearch.length && keywordSearch || undefined,
-      AND: [ { userId: userId } ],
+      AND: [ { userRenterId: userRenterId } ],
       NOT: { transactionStatus: "closed" },
     },
     select: {
@@ -170,8 +170,13 @@ export async function getServerSideProps(context) {
       itemId: true,
       renter: {
         select: {
+          rating: true,
+          isUnrated: true,
           userAccount: {
-            select: { name: true }
+            select: { 
+              name: true,
+              profilePictureUrl: true
+            }
           }
         }
       },

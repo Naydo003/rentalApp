@@ -10,20 +10,22 @@ import CancelBooking from '../../booking/components/CancelBooking';
 import SeeModChanges from '@/modules/booking/components/SeeModChanges';
 import Link from 'next/link';
 import Image from 'next/image';
-import { statusTitleMap } from '../utils/enumerables';
+import { statusTitleMapOwner } from '../utils/enumerables';
 
-function pad(n) {
-  return n<10 ? '0'+n : n;
-}
 
-function BookingCardUser({booking}) {
+
+function BookingCardOwner({booking}) {
+
+  console.log(booking)
+
   const [isExpanded, setIsExpanded ] = useState(false)
   const [ status, setStatus ] = useState(booking.status)
   const [ modalContent, setModalContent ] = useState(null)
   const [ modDetails, setModDetails ] = useState(null)
 
   const pickUpTime = new Date(booking.pickUpTime)
-  let userId = booking.userId                // get from auth
+  const returnTime = new Date(booking.returnTime)
+
   
   const expandBookingHandler = () => {
     setIsExpanded(!isExpanded)
@@ -56,58 +58,11 @@ function BookingCardUser({booking}) {
     }
   }, [booking.id, booking.status])
 
-  const payDeposit = async () => {
-    
-
-    console.log('open modal for payment')
-    console.log('add in payment details')
-    console.log('Click confirm')
-    console.log('create transaction and get payment')
-
-    let date = new Date()
-    let newTransactionData = {
-      bookingId: booking.id,
-      createdAt: date.toISOString(),
-      status: 'awaitingDepositDebit'
-    }
-
-    try {
-      const {data} = await axios.post('/api/transaction', { newTransactionData })      
-      newTransactionData.id = data.id
-      if (!newTransactionData.id) {
-        console.log("no itemId")
-        return
-      }
-
-    } catch (err){
-      console.log(err)
-      res.status(500).json({error: err.message})
-      return
-    }
-    
-    console.log("newId")
-    console.log(newTransactionData.id)
-
-    // Need to send off for deposit and then update the transaction record.
-
-
-    try {
-      const {data} = await axios.patch('/api/transaction', { updateData })      
-      
-      if (!data.id) {
-        console.log("no itemId")
-        return
-      }
-
-    } catch (err){
-      console.log(err)
-      res.status(500).json({error: err.message})
-      return
-    }
-
+  const acceptBooking = async () => {
+    let acceptedOnDate = new Date()
     let updateData = { 
-      status: 'confirmed',
-      confirmedAndDepositOnDate: date.toISOString()
+      status: 'accepted',
+      acceptedOnDate: acceptedOnDate.toISOString()
     }
 
     try {
@@ -117,30 +72,30 @@ function BookingCardUser({booking}) {
       })
     console.log("********result******")
     console.log(result)
-    setStatus('confirmed')
+    setStatus('accepted')
     console.log('flash message booking accepted')
     } catch (err){
       console.log(err)
     }      
   }
 
-  const retractBooking = async () => {
-    let retractedOnDate = new Date()
+  const declineBooking = async () => {
+    console.log('declineing')
+    let declinedOnDate = new Date()
     let updateData = { 
-      status: 'retracted',
-      retractedOnDate: retractedOnDate.toISOString()
+      status: 'declined',
+      declinedOnDate: declinedOnDate.toISOString()
     }
 
     try {
       const result = await axios.patch(`/api/booking`, { 
         updateData, 
         bookingId: booking.id,
-        // userId: userId          // from context, required so api can match to escortid in db
       })
     console.log("********result******")
     console.log(result)
-    setStatus('retracted')
-    // router.push(`/escort-profile/${escortId}/bookings`)
+    setStatus('declined')
+
     } catch (err){
       console.log(err)
     }          
@@ -167,7 +122,7 @@ function BookingCardUser({booking}) {
           onClick={()=>{
             setModalContent(
               <CancelBooking booking={booking} setStatus={setStatus} setModalContent={setModalContent} />
-              )
+            )
           }} 
         >
           Cancel
@@ -175,27 +130,26 @@ function BookingCardUser({booking}) {
       </>
     )        
   }
-  
-    
+
+
   const seeModification = () => {
     setModalContent(
       <SeeModChanges booking={booking} modDetails={modDetails} setStatus={setStatus} setModalContent={setModalContent} setModDetails={setModDetails} />
     )
   }
-
-  const rebook = () => {
-    console.log('click')
-
-  }
-
-
-  const reportOwner = () => {
-    console.log('click')
-  }
-
   
-console.log('booking.item')
-console.log(booking.item)
+  const commenceMeeting = () => {
+      router.push(
+        {
+          pathname: `/escort-profile/${escortId}/active-booking`,
+          query: { bookingId: booking.id },
+      })
+  }
+  
+
+  const reportUser = () => {
+    console.log('make a report')
+  }
 
   
   return (
@@ -207,36 +161,59 @@ console.log(booking.item)
       )}
 
         <div className={isExpanded ? 'h-80 w-full relative border-b flex' : 'h-40 w-full relative flex'}>
-          <div className='relative overflow-hidden w-40 h-40 rounded-xl shrink-0'>
-            <Image
-              src={booking.item?.itemPhotos[0]?.imageUrl || 'https://www.freeiconspng.com/thumbs/profile-icon-png/profile-icon-9.png'}
-              className="object-cover"
-              fill
-              sizes="(max-width: 768px) 25vw, 10vw"
-              alt='item image'
-            />
+          <div className='relative w-40 h-40' >
+            <div className='relative overflow-hidden w-20 h-20 rounded-xl shrink-0'>
+              <Image
+                src={booking.item?.itemPhotos[0]?.imageUrl || 'https://www.freeiconspng.com/thumbs/profile-icon-png/profile-icon-9.png'}
+                className="object-cover"
+                fill
+                sizes="(max-width: 768px) 25vw, 10vw"
+                alt='item image'
+              />
+            </div>
+            <div className='absolute bottom-0 right-0 w-32 h-32' >
+              <div className='relative w-full h-full rounded-full overflow-hidden border' >
+                <Image
+                  src={booking.renter.userAccount.profilePictureUrl || 'https://www.freeiconspng.com/thumbs/profile-icon-png/profile-icon-9.png'}
+                  className="object-cover"
+                  fill
+                  sizes="(max-width: 768px) 25vw, 10vw"
+                  alt='item image'
+                /> 
+              </div>
+                <div className='absolute -top-4 flex flex-row justify-center items-center w-full' >
+                  <div className='bg-yellow-400/40 px-2' >
+                    <p className='text-2xl'>{booking.renter.rating}</p>
+                  </div>
+                </div>
+            </div>
+            
+            
           </div>
+          
           <div className='grow pt-2 mx-5'>
             <div className={status === 'accepted' ? 'border-y-2 border-green-500 text-green-500' : 'border-y-2 border-orange-500 text-orange-500'} >
-              <p className='font-semibold text-center'>{statusTitleMap[status]}</p>
+              <p className='font-semibold text-center'>{statusTitleMapOwner[status]}</p>
             </div>
             <div className='' >
-              <h3 className='subheading mb-0 bg-[re]'>{booking.item.name}</h3>
-              <p className='bg-[re]'>Pick-up: {pad(pickUpTime.getDate()) + '/' + pad(pickUpTime.getMonth()+1) + '/' + pickUpTime.getFullYear()}</p>
+              <h3 className='subheading mb-0 bg-[re]'>{booking.renter.userAccount.name} <span className='secondary-text'>for</span> {booking.item.name}</h3>
+              <p className='bg-[re]'>Pick-up: {pickUpTime.toLocaleTimeString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+              <p className='bg-[re]'>Returning: {returnTime.toLocaleTimeString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
               
-              <p className='bg-[rd]'>{pad(pickUpTime.getHours()) + ':' + pad(pickUpTime.getMinutes())}</p>
             </div>
             
             <div className='w-full flex flex-row justify-center space-x-2'>
               
-              
-              {status === 'accepted' && <button className='small-main-button' type='button' onClick={payDeposit} >Pay Deposit</button>}
-              {(status === 'requested' || status === 'accepted') && <button className='small-main-button' type='button' onClick={retractBooking} >Retract</button>}
+              {status === 'requested' && <button className='small-main-button' type='button' onClick={acceptBooking} >Accept</button>}
+              {status === 'requested' && <button className='small-main-button' type='button' onClick={declineBooking} >Decline</button>}
+              {status === 'declined' && <button className='small-main-button' type='button' onClick={acceptBooking} >Accept</button>}
+              {status === 'accepted' && <button className='small-main-button' type='button' onClick={declineBooking} >Decline</button>}
               {status === 'confirmed' && <button className='small-main-button' type='button' onClick={modOrCancel} >Modify or Cancel</button>}
-              {(status === 'cancelledByUser' || status === 'cancelledByOwner') && <Link className='small-main-button' href={`/${booking.item.id}`} >Re-Book</Link>}
+              {(status === 'cancelledByUser' || status === 'cancelledByEscort') && <button className='small-main-button' type='button' onClick={reportUser} >Report User</button>}
               {(status === 'modRequestedByOwner' || status === 'modRequestOrCancelByOwner') && <button className='small-main-button' type='button' onClick={seeModification} >See Modification Details</button>}
               {(status === 'modRequestedByUser' || status === 'modRequestOrCancelByUser') && <button className='small-main-button' type='button' onClick={seeModification} >See Modification Details</button>}
-              {status === 'confirmed' && pickUpTime <= new Date() && <button className='small-main-button' type='button' onClick={reportOwner} >Something Was Wrong with my booking</button>}
+              {status === 'confirmed' && <button className='small-main-button' type='button' onClick={commenceMeeting} >Commence Meeting</button>}
+
             </div>
     
 
@@ -254,4 +231,4 @@ console.log(booking.item)
   
 }
 
-export default BookingCardUser
+export default BookingCardOwner

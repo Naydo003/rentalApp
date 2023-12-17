@@ -1,6 +1,17 @@
-import React from 'react'
+import ButtonMain from '@/common/ButtonMain'
+import { UserContext } from '@/common/contexts/user-context'
+import NavBarRentersProfile from '@/modules/renters-profile/components/NavbarRentersProfile'
+import { useRouter } from 'next/router'
+import React, { useContext } from 'react'
+
+
 
 function index() {
+
+  const router = useRouter()
+
+  const { accountName, userRenterId } = useContext(UserContext)
+
   return (
     <>
     <NavBarRentersProfile />
@@ -8,6 +19,7 @@ function index() {
       <div className='small-container flex-1 overflow-auto'>
         <h1>{accountName} Profile</h1>
         
+        <ButtonMain variant='blackWhite' onSubmit={() => router.push(`/renters-profile/${userRenterId}/bookings`)} >See All Bookings</ButtonMain>
 
 
           
@@ -24,7 +36,7 @@ export async function getServerSideProps(context) {
   console.log("getting ssP's")
   const items = await prisma.account.findUnique({
     where: {
-      id: JSON.parse(context.params.userId),
+      id: JSON.parse(context.params.userRenterId),
     },
     select: {
       id: true,
@@ -54,7 +66,7 @@ export async function getServerSideProps(context) {
           reviewsWritten: true,
           transactionCount: true,
           claimsAgainst: true,
-          isSuspende: true
+          isSuspended: true
         }
       },
       accountBlacklistedOn: true, 

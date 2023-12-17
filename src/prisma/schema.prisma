@@ -273,6 +273,7 @@ model UserRenteeProfile {
   transactionCount   Int    @db.SmallInt  @default(0)
   transactionValue   Decimal @db.Decimal(3, 2) @default(0.00)
   claimsAgainst   Claim[]
+  claims        RenteeClaim[]
   isSuspended   Boolean     @default(false)
 
 }
@@ -284,11 +285,13 @@ model UserRenterProfile {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   ownedItems    Item[]
+  itemBookings  Booking[]
   isUnrated   Boolean   @default(true)
   rating    Decimal     @db.Decimal(3, 2) @default(0.00)
   avgResponseTime   Float     @default(0)
   reviewsWritten  RenteeReview[]
   transactionCount    Int   @default(0)
+  claims              Claim[]
   claimsAgainst        RenteeClaim[]
   isSuspended   Boolean     @default(false)
 }
@@ -299,6 +302,8 @@ model Booking {
   userId      Int
   item        Item    @relation(fields: [itemId], references: [id], onDelete: Restrict, onUpdate: Restrict)
   itemId      Int
+  owner        UserRenterProfile    @relation(fields: [userRenterId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  userRenterId      Int
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   itemAgreedRate    String   
@@ -325,6 +330,8 @@ model Booking {
   bookingClosedOnDate       DateTime?
   transaction         Transaction?
   transactionStatus   TransactionStatus @default(uninitialized)
+  itemReview              ItemReview?
+  renteeReview        RenteeReview?
 }
 
 enum BookingStatus {
@@ -348,7 +355,7 @@ model BookingModDetails {
   id                        Int       @id @default(autoincrement())
   booking                   Booking    @relation(fields: [bookingId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   bookingId                 Int
-  initiatedByRenter         Boolean     @default(false)
+  initiatedByOwner         Boolean     @default(false)
   createdAt                 DateTime    @default(now())
   updatedAt                 DateTime?   @updatedAt
   itemAgreedRate            Decimal?    @db.Decimal(7, 2)
@@ -373,9 +380,9 @@ model CancellationDetails {
   id                        Int       @id @default(autoincrement())
   booking                   Booking    @relation(fields: [bookingId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   bookingId                 Int
-  initiatedByRenter         Boolean     @default(false)
+  initiatedByOwner         Boolean     @default(false)
   createdAt                 DateTime    @default(now())
-  escortNote                String?
+  ownerNote                String?
   userNote                  String?
 }
 
@@ -439,6 +446,8 @@ model ItemReview {
   id      Int       @id @default(autoincrement())
   item    Item     @relation(fields: [itemId], references: [id])
   itemId    Int
+  booking      Booking   @relation(fields: [bookingId], references: [id])
+  bookingId Int @unique
   author    UserRenteeProfile     @relation(fields: [userRenteeId], references: [id])
   userRenteeId    Int
   createdAt DateTime @default(now())
@@ -454,6 +463,8 @@ model RenteeReview {
   userRenterId    Int
   aboutRentee     UserRenteeProfile   @relation(fields: [userRenteeId], references: [id])
   userRenteeId    Int
+  booking      Booking   @relation(fields: [bookingId], references: [id])
+  bookingId Int @unique
   createdAt DateTime @default(now())
   rating    Rating
   publicComment   String?
@@ -475,8 +486,10 @@ model Claim {
   updatedAt DateTime @updatedAt
   transaction   Transaction  @relation(fields: [transactionId], references: [id])
   transactionId Int @unique
-  againstRentee   UserRenteeProfile   @relation(fields: [userId], references: [id])
-  userId    Int
+  byRenter      UserRenterProfile   @relation(fields: [userRenterId], references: [id])
+  userRenterId    Int
+  againstRentee   UserRenteeProfile   @relation(fields: [userRenteeId], references: [id])
+  userRenteeId    Int
   claimType   ClaimType
   details     String
   pictureEvidence     RentersClaimImages[]
@@ -524,8 +537,10 @@ model RenteeClaim {
   updatedAt DateTime @updatedAt
   transaction   Transaction  @relation(fields: [transactionId], references: [id])
   transactionId Int @unique
-  claimAgainst  UserRenterProfile   @relation(fields: [userId], references: [id])
-  userId    Int
+  claimBy UserRenteeProfile   @relation(fields: [userRenteeId], references: [id])
+  userRenteeId    Int
+  claimAgainst  UserRenterProfile   @relation(fields: [userRenterId], references: [id])
+  userRenterId    Int
   claimType   RenteeClaimType
   details     String
   pictureEvidence     RenteesClaimImages[]

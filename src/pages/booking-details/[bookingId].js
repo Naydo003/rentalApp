@@ -1,6 +1,6 @@
 import ButtonMain from '@/common/ButtonMain'
 import { cancellationPolicyChargeTitleMap, cancellationPolicyTimeTitleMap, lateReturnPolicyTitleMap } from '@/common/utilities/enumerables'
-import BookingPanelDisplayOnly from '@/modules/booking/components/BookingPanelDisplayOnly'
+import BookingPanelDisplayOnly from '@/modules/booking/components/BookingPanelDisplayUser'
 import BookingPanel2 from '@/modules/rentee-booking/BookingPanel2'
 import NavBarSearch from '@/modules/rentee-booking/NavBarSearch'
 import React from 'react'
@@ -24,7 +24,7 @@ function BookingDetails({booking}) {
         
         <div className='border-red-600 border-4 relative'>
 
-        <h1 className='heading'>Request to Book - {booking.item.name}</h1>
+        <h1 className='heading'>Booking - {booking.item.name} by {booking.renter.userAccount.name}</h1>
 
 
         <div className='grid grid-cols-5'>
@@ -132,7 +132,8 @@ function BookingDetails({booking}) {
               booking={{
                 agreedDeposit: booking.agreedDeposit,
                 itemAgreedRate: booking.itemAgreedRate,
-                expectedTransactionCost: booking.expectedTransactionCost
+                expectedTransactionCost: booking.expectedTransactionCost,
+                status: booking.status
               }}
               pickUpDateTime={pickUpTime} 
               returnDateTime={returnTime} 
@@ -177,7 +178,10 @@ export async function getServerSideProps(context) {
       renter: {
         select: {
           userAccount: {
-            select: { name: true }
+            select: { 
+              name: true,
+              profilePictureUrl: true 
+            }
           }
         }
       },

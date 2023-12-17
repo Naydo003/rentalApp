@@ -7,12 +7,13 @@ import { useRouter } from 'next/router';
 import PriceCalc from '@/modules/rentee-booking/PriceCalc';
 import Image from 'next/image';
 import { categoriesTitleMap, conditionTitleMap } from '@/common/utilities/enumerables';
+import { statusTitleMapOwner } from '@/modules/renters-profile/utils/enumerables';
 
 
 
 
 
-function BookingPanelDisplayOnly({booking, item, pickUpDateTime, returnDateTime}) {
+function BookingPanelDisplayUser({booking, item, pickUpDateTime, returnDateTime}) {
 
   const router = useRouter()
 
@@ -20,8 +21,11 @@ function BookingPanelDisplayOnly({booking, item, pickUpDateTime, returnDateTime}
 
 
   return (
-    <div className='h-80 border border-gray-600'>
-
+    <div className='h-80'>
+      <div className={status === 'accepted' ? 'border-y-2 border-green-500 text-green-500' : 'border-y-2 border-orange-500 text-orange-500'} >
+        <p className='font-semibold text-center py-2 text-xl'>{statusTitleMapOwner[booking.status]}</p>
+      </div>
+      
       <div className='flex flex-row my-5'>
         <div className='w-32 h-32 ml-5' >
           <div className='relative h-full overflow-hidden' >
@@ -69,4 +73,4 @@ function BookingPanelDisplayOnly({booking, item, pickUpDateTime, returnDateTime}
   )
 }
 
-export default BookingPanelDisplayOnly
+export default BookingPanelDisplayUser

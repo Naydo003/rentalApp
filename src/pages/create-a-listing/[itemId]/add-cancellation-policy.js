@@ -119,9 +119,8 @@ function AddCancellationPolicy() {
             <div className='sm:w-[80%] mx-auto'>
               <div className='my-5 grid grid-cols-1 sm:grid-cols-5 gap-2'>
                 {cancellationPolicyCharge.reverse().map((policy)=>(
-                  <div className='min-w-[140px] sm:min-w-[50px]'>
+                  <div key={policy.name} className='min-w-[140px] sm:min-w-[50px]'>
                     <ButtonContent 
-                      key={policy.name} 
                       variant='reducedPadding'
                       buttonName={policy.name} 
                       isSelected={isSelected1 === policy.name} 
@@ -164,9 +163,8 @@ function AddCancellationPolicy() {
             <div className='sm:w-[80%] mx-auto'>
               <div className='my-5 grid grid-cols-1 sm:grid-cols-5 gap-2'>
                 {cancellationPolicyCharge.reverse().map((policy)=>(
-                  <div className='min-w-[140px] sm:min-w-[50px]'>
+                  <div key={policy.name} className='min-w-[140px] sm:min-w-[50px]'>
                 <ButtonContent 
-                  key={policy.name} 
                   variant='reducedPadding'
                   buttonName={policy.name} 
                   isSelected={isSelected3 === policy.name} 

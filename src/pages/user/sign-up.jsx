@@ -1,10 +1,10 @@
 import React from 'react'
-
+import { SignUp } from '@clerk/nextjs'
 import FormNewUser from '@/modules/user-profile/components/NewUserForm'
 import NavBarSearch from '@/modules/rentee-booking/NavBarSearch'
 
 
-function SignUp() {
+function SignUpPage() {
 
 
   return (
@@ -14,7 +14,8 @@ function SignUp() {
         <div className='h-screen flex flex-col'>
           <div className='small-container flex-1 overflow-auto'>
             <h1 className='heading'>Sign-up</h1>
-            <FormNewUser />
+            {/* <FormNewUser /> */}
+            <SignUp />
           </div>
           {/* <FooterMain formId='new-item-form' prevRoute={`/`}  /> */}
         </div>
@@ -23,4 +24,4 @@ function SignUp() {
   )
 }
 
-export default SignUp
+export default SignUpPage

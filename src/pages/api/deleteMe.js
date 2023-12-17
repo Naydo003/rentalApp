@@ -10,7 +10,7 @@ export default async function handler(req, res) {
       break
 
     case 'PATCH':
-      console.log('PAATCHHHHHHHHHHH fuck')
+      console.log('PAATCHHHHHHHHHHH')
       console.log(req.body)
       console.log(req.files)
   

@@ -19,6 +19,9 @@ function NewItemForm() {
 
   const onSubmit = async (newItemData) => {
     let newRenterId
+    console.log('userRenterId')
+    console.log(userRenterId)
+
     // if there is no renterId (ie if first item this user is renting) this will create a renterId in database and assign it to variable -- needs to be context
     if (!userRenterId) {
       try {

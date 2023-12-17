@@ -12,16 +12,14 @@ function CancelBooking({booking, setStatus, setModalContent }) {
   const { register, handleSubmit } = useForm()
   let router = useRouter()
 
-  const bookingDate = format(new Date(booking.pickupTime), "eeee',' do MMMM")
+  const bookingDate = new Date(booking.pickUpTime).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric'})
 
 
   const onSubmit = async (bookingData) => {
 
     console.log(bookingData)
 
-    let userIdTemp = 9
-    let escortIdTemp = 34
-    bookingData.initiatedByRenter = booking.item?.name ? false : true
+    bookingData.initiatedByOwner = booking.owner ? false : true
 
 
     try {
@@ -39,7 +37,7 @@ function CancelBooking({booking, setStatus, setModalContent }) {
       }
 
       // switch to auth once implemented
-      const actionBy = booking.user?.name ? 'Escort' : 'User'
+      const actionBy = booking.owner.userAccount.name ? 'Owner' : 'User'
       
       // const newBookingModId = data.id
       // console.log(newBookingModId)
@@ -90,9 +88,9 @@ function CancelBooking({booking, setStatus, setModalContent }) {
             <Input
               id="userNote"
               element="textarea"
-              label={`Please write a note to ${booking.item?.name || booking.renter?.name} with what you would like for the booking`}
+              label={`You can write a note to ${booking.owner?.userAccount.name || booking.renter?.userAccount.name} here`}
               validators={[]}
-              errorText="Please enter a valid phone number"
+              errorText="Please enter a valid message"
               name={register('userNote').name}
               formOnChange={register('userNote').onChange}
               formOnBlur={register('userNote').onBlur}

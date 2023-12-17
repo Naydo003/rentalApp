@@ -6,83 +6,124 @@ import Input from '@/common/components/FormElements/Input'
 import { VALIDATOR_REQUIRE } from '@/common/utilities/validators'
 import axios from 'axios'
 import { toast } from 'react-toastify'
-
-import { DateRangePicker } from 'react-date-range';
+import { DateRange } from 'react-date-range';
 import 'react-date-range/dist/styles.css'; // main style file
 import 'react-date-range/dist/theme/default.css'; // theme css file
-import { set } from 'date-fns'
+import TimeSelector from '@/common/components/FormElements/TimeSelector';
 
 
 function ModifyBooking({booking, setStatus, setModalContent, setModDetails}) {
-  const [ startDate, setStartDate ] = useState(new Date(booking.pickUpTime))
-  const [ endDate, setEndDate ] = useState(new Date(booking.returnTime))
-  const [ endTime, setEndTime ] = useState('')
+  const router = useRouter()
+  const pickUpDateTime = new Date(booking.pickUpTime)
+  const returnDateTime = new Date(booking.returnTime)
 
-  const { register, handleSubmit, setValue, getValues, formState: { isDirty, dirtyFields } } = useForm({  
+  const { item } = booking
+  const { register, handleSubmit, getValues, formState: { isDirty, dirtyFields } } = useForm({
     defaultValues: {
-      pickUpDate: new Date(booking.pickUpTime),
-      returnTime: new Date(booking.returnTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) || '',
-      endTime: new Date(booking.endTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) || '',
-      incall: booking.incall || false,
-      location: booking.location || null,
-      userNote: ''
+
+      pickUpTime: pickUpDateTime.toLocaleTimeString(undefined, {
+        hour:   '2-digit',
+        minute: '2-digit',
+      }),
+      returnTime: returnDateTime.toLocaleTimeString(undefined, {
+        hour:   '2-digit',
+        minute: '2-digit',
+      }),
+      renteeNote: '',
+      cancelIfReject: false
     }
   })
-  let router = useRouter()
 
-
-
+  const [ startDate, setStartDate ] = useState(pickUpDateTime)
+  const [ endDate, setEndDate ] = useState(returnDateTime)
+  const [ price, setPrice ] = useState(booking.expectedTransactionCost)
+  const [ rate, setRate ] = useState(booking.itemAgreedRate)
+  
+  
   const selectionRange = {
     startDate,
     endDate,
     key: 'selection'
   }
-
+  
   const handleDateSelect = (ranges) => {
+    console.log('ranges')
     console.log(ranges)
+    
     setStartDate(ranges.selection.startDate)
     setEndDate(ranges.selection.endDate)
-    setValue('pickUpDate', ranges.selection.startDate, { shouldDirty: true })
+    
+    // setDuration(calcDuration())
+    
   }
-
-
-
-
-  const calcEndTime = (duration) => {
-
-    let timeToBeAdded = bookingDurationMilliSecondMap[duration]
-    // console.log(timeToBeAdded)
-    let startTime = startDate.setHours(getValues('startTime').split(':')[0], getValues('startTime').split(':')[1])
-    // console.log(startTime)
-    let endTimeMS = startTime + timeToBeAdded
-    // console.log(endTimeMS)
-    let endTime = new Date(endTimeMS)
-    // console.log(endTime)
-    let endTimeString = endTime.toLocaleTimeString(undefined, {
-      hour:   '2-digit',
-      minute: '2-digit',
-    })
-    // endTime.getHours().toFixed(2).toString().concat(':', endTime.getMinutes().toFixed(2).toString())
-    // console.log(endTimeString)
-    setValue('endTime', endTimeString, { shouldDirty: true })
-    setEndDate(endTime)
-  }
-
-  const durationChangeHandler = (event) => {
-    register('duration').onChange(event)
-    calcEndTime(event.target.value)
-  }
-
-  const startTimeBlurHandler = (event) => {
-    register('startTime').onBlur(event)
-    const duration = getValues('duration') 
+  
+  const calcDuration = () => {
+    
+    let pickUpDate = startDate
+    let returnDate = endDate
+    let pickUpTime = getValues('pickUpTime')
+    let returnTime = getValues('returnTime')
+    
+    let pickUpDateTime = pickUpDate.setHours(pickUpTime.split(':')[0], pickUpTime.split(':')[1])
+    let returnDateTime = returnDate.setHours(returnTime.split(':')[0], returnTime.split(':')[1])
+    
+    let duration = (returnDateTime - pickUpDateTime)/1000/60/60
+    
+    console.log('duration')
     console.log(duration)
-    console.log(bookingDurationMilliSecondMap[duration])
-    if (bookingDurationMilliSecondMap[duration]) {
-
-      calcEndTime(duration)
-    }
+    return duration
   }
+  
+  const [ duration, setDuration ] = useState(calcDuration())
+
+  const calcPrice = () => {
+    let priceEstimate
+    if (item.rentPerHour) {
+      priceEstimate = Math.ceil(duration) * item.rentPerHourPrice
+      setRate(`$${item.rentPerHourPrice} per Hour for ${Math.ceil(duration)} hours`)
+    } 
+    
+    if (item.rentPerDay){
+      let priceEstimate2 = Math.ceil(duration / 24) * item.rentPerDayPrice 
+      if (priceEstimate2 <= priceEstimate) {
+        setRate(`$${item.rentPerDayPrice} per Day for ${Math.ceil(duration / 24)} days`)
+        priceEstimate = priceEstimate2
+      }
+    } 
+    
+    if (item.rentPerWeek){
+      let priceEstimate2 = Math.ceil(duration / 24 / 7) * item.rentPerWeekPrice 
+      if (priceEstimate2 <= priceEstimate) {
+        setRate(`$${item.rentPerWeekPrice} per Week for ${Math.ceil(duration / 24 / 7)} weeks`)
+        priceEstimate = priceEstimate2
+      }
+    } 
+    
+    return priceEstimate
+  }
+
+  useEffect(() => {
+    setDuration(calcDuration())
+  }, [endDate])
+
+  useEffect(() => {
+    setPrice(calcPrice())
+  }, [duration])
+
+
+
+
+  const pickUpTimeOnChangeHandler = (event) => {
+    register('pickUpTime').onChange(event)
+    setDuration(calcDuration())
+  }
+
+  const returnOnChangeHandler = (event) => {
+    register('returnTime').onChange(event)
+    setDuration(calcDuration())
+  }
+
+
 
 
   const onSubmit = async (formData) => {
@@ -104,30 +145,29 @@ function ModifyBooking({booking, setStatus, setModalContent, setModDetails}) {
     })
 
     // If any time related fields have changed ensure both start and end time are in newModData and manipulate them to be correctly formatted
-    if (newModData.pickUpDate || newModData.Time || newModData.duration || newModData.endTime) {
-      newModData.startTime = formData.startTime
-      newModData.endTime = formData.endTime
+    if (newModData.startDate || newModData.pickUpTime || newModData.endDate || newModData.returnTime) {
+      newModData.pickUpTime = formData.pickUpTime
+      newModData.returnTime = formData.returnTime
 
       // two ways of getting time with date as datetime
-      newModData.startTime = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), newModData.startTime.split(':')[0], newModData.startTime.split(':')[1] )
-      endDate.setHours(newModData.endTime.split(':')[0], newModData.endTime.split(':')[1])
-      newModData.endTime = endDate
+      newModData.pickUpTime = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), newModData.pickUpTime.split(':')[0], newModData.pickUpTime.split(':')[1] )
+      endDate.setHours(newModData.returnTime.split(':')[0], newModData.returnTime.split(':')[1])
+      newModData.returnTime = endDate
   
       // We MUST get the time zone from location otherwise it will be set to wherever the browser is at the time.
   
-      newModData.startTime = newModData.startTime.toISOString()
-      newModData.endTime = newModData.endTime.toISOString()
+      newModData.pickUpTime = newModData.pickUpTime.toISOString()
+      newModData.returnTime = newModData.returnTime.toISOString()
     }
 
-    // startDate is not required by api
+    // startDate and endDate are not required by api
     delete newModData.startDate
+    delete newModData.endDate
 
-    let userIdTemp = 9
-
-    const requestBy = booking.renter?.userAccount.name ? 'Escort' : 'User'
+    const requestBy = booking.renter?.userAccount.name ? 'Owner' : 'User'
 
     // If user logged in set to false otherwise and escort is making request so set to true.
-    newModData.initiatedByRenter = requestBy === 'Escort' ? true : false
+    newModData.initiatedByOwner = requestBy === 'Owner' ? true : false
 
     newModData.status = 'requested'
 
@@ -188,77 +228,82 @@ function ModifyBooking({booking, setStatus, setModalContent, setModDetails}) {
         <div className='w-full max-w-[640px] px-5 py-5 sm:py-10 mx-auto flex-1 overflow-auto'>
           <h1>What would you like to change with your Booking for {booking.item?.name || booking.renter?.userAccount.name}</h1>
 
-          <div className='w-[600px] h-[400px] border-2'> 
-            <DateRangePicker 
+
+          <div className='w-full h-fit border-2'> 
+            <DateRange 
               ranges={[selectionRange]} 
               onChange={handleDateSelect}
               minDate={new Date()}
-              size="sm"
             />
-
           </div>
-
-          <form id='new-item-form' onSubmit={handleSubmit(onSubmit)}>  
+          <form id='modify-booking-form' onSubmit={handleSubmit(onSubmit)}>  
 
             <input
-              id='cancelIfReject'
+              id='startDate'
               type='text'
               className='hidden'
               value={startDate}
               {...register('startDate')}
             />
 
-            <Input 
-              id="startTime"
-              element="input"
-              type="text"
-              label="What time would you like to start?"
-              validators={[VALIDATOR_REQUIRE()]}
-              errorText="Please enter a valid time"
-              // initialValue={escort.startTime}
-              // initialValid={true}
-              name={register('startTime').name}
-              formOnChange={register('startTime').onChange}
-              formOnBlur={startTimeBlurHandler}
-              inputRef={register('startTime').ref} 
+            <input
+              id='endDate'
+              type='text'
+              className='hidden'
+              value={endDate}
+              {...register('endDate')}
             />
 
-
-            <Input 
-              id="endTime"
-              element="input"
-              type="text"
-              label="What time are you expecting to finish?"
+            <TimeSelector
+              id="pickUpTime"
+              label="Pick Up Time?"
               validators={[VALIDATOR_REQUIRE()]}
               errorText="Please enter a valid time"
-              // initialValue={escort.endTime}
+              // initialValue={escort.pickUpTime}
               // initialValid={true}
-              name={register('endTime').name}
-              formOnChange={register('endTime').onChange}
-              formOnBlur={register('endTime').onBlur}
-              inputRef={register('endTime').ref} 
+              name={register('pickUpTime').name}
+              formOnChange={pickUpTimeOnChangeHandler}
+              formOnBlur={register('pickUpTime').onBlur}
+              inputRef={register('pickUpTime').ref} 
             />
 
-            
+            <TimeSelector
+              id="returnTime"
+              label="Drop off time"
+              validators={[VALIDATOR_REQUIRE()]}
+              errorText="Please enter a valid time"
+              // initialValue={escort.returnTime}
+              // initialValid={true}
+              name={register('returnTime').name}
+              formOnChange={returnOnChangeHandler}
+              formOnBlur={register('returnTime').onBlur}
+              inputRef={register('returnTime').ref} 
+              variant='short'
+            />
 
-
-
-
+            <div className='flex flex-row justify-between' >
+              <div className='' >
+                <p>{rate}</p>         
+              </div>
+              <div className='' >
+                <p>${price}</p>
+              </div>
+            </div>
 
             <Input
-              id="userNote"
+              id="renteeNote"
               element="textarea"
-              label={`Please write a note to ${booking.escort?.name || booking.user?.name} with what you would like for the booking`}
+              label={`Please write a note to ${booking.owner?.userAccount.name || booking.user?.name} with what you would like for the booking`}
               validators={[]}
               errorText="Please enter a valid phone number"
-              name={register('userNote').name}
-              formOnChange={register('userNote').onChange}
-              formOnBlur={register('userNote').onBlur}
-              inputRef={register('userNote').ref} 
+              name={register('renteeNote').name}
+              formOnChange={register('renteeNote').onChange}
+              formOnBlur={register('renteeNote').onBlur}
+              inputRef={register('renteeNote').ref} 
             />
 
             <div className='flex flex-row space-x-4' >
-              <label className='form-label max-w-[70%]' htmlFor='cancelIfReject' >Will you like to cancel if these conditions cannot be accepted?</label>               {/*  htmlFor in jsx is same as for in standard html, keyword for was taken in js    */}
+              <label className='form-label max-w-[70%]' htmlFor='cancelIfReject' >Will you like to cancel if these conditions cannot be accepted?</label>               {/*  htmlFor in jsx is same as for in standard html, keyword for was taken in js   */}
           
               <input 
                 id='cancelIfReject'

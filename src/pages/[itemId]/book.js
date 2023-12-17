@@ -55,6 +55,7 @@ function book({item}) {
   const onSubmit = async (bookingData) => {
     console.log("********onsubmit triggered******")
 
+    bookingData.userRenterId = item.ownersRenterId,
     bookingData.itemAgreedRate = agreedRate,
     bookingData.itemAgreedEarlyCancelPolicy = item.generalCancellationPolicy,
     bookingData.itemAgreedLateCancelationPolicyTime = item.lateCancellationPolicyTime,

@@ -19,8 +19,8 @@ function AddPhotosPage() {
   const uploadImage = async () => {
     const formData = new FormData()
     formData.append("image", img)
-    // const response = await axios.patch('/api/fuck', { formData })
-        const response = await fetch("/api/fuck", {
+    // const response = await axios.patch('/api/deleteMe', { formData })
+        const response = await fetch("/api/deleteMe", {
       method: "PATCH",
       body: formData,
     });

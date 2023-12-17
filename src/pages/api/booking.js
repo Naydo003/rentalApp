@@ -6,6 +6,7 @@ export default async function handler(req, res) {
   switch (req.method) {
     case 'POST':
       const { 
+        userRenterId,
         itemAgreedRate,
         itemAgreedEarlyCancelPolicy,
         itemAgreedLateCancelationPolicyTime,
@@ -31,6 +32,7 @@ export default async function handler(req, res) {
           data: {
             itemId: req.body.itemId,
             userId: req.body.userRenteeId,
+            userRenterId,
             itemAgreedRate,
             itemAgreedEarlyCancelPolicy,
             itemAgreedLateCancelationPolicyTime,
@@ -55,6 +57,7 @@ export default async function handler(req, res) {
 
       break
 
+      
       case 'PATCH':
         console.log("PATCH")
         console.log(req.body)

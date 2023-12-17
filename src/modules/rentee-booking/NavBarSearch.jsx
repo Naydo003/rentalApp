@@ -24,7 +24,7 @@ function NavBarSearch() {
 
         <div className='relative flex flex-row justify-between items-center sm:space-x-4 sm:justify-end w-full'>
           {userRenterId ? (
-            <Link className='nav-link hidden sm:block' href='/renters-profile/userRenterId'>Switch To Renter</Link>      // Not using signOutHandler any more
+            <Link className='nav-link hidden sm:block' href={`/renters-profile/${userRenterId}`} >Switch To Renter</Link>      // Not using signOutHandler any more
             ) : (
             <Link className='nav-link hidden sm:block' href='/create-a-listing'>Rent Your Stuff</Link>
           )}

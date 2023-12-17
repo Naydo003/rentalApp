@@ -84,7 +84,7 @@ const handler = nc({
         data: {
           item: { connect: { id: itemId } },
           imageUrl: uploadedImageResponse.secure_url,
-          order: index
+          order: index + 1                                       // Need to be able to change the order
         }}) 
         return newItemPhoto
       } catch (err) {

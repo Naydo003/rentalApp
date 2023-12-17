@@ -40,6 +40,20 @@ export default async function handler(req, res) {
       case 'POST':
         console.log(req.body)
         const { newModData, bookingId: BookingIdForMod, bookingUpdateData } = req.body
+        let newBookingMod
+        try {
+          newBookingMod = await prisma.bookingModDetails.create({
+          data: {
+            bookingId: BookingIdForMod,
+            ...newModData
+          },
+        }
+        ) 
+        
+        } catch (err) {
+          console.log(err)
+          res.status(500).json({error: err.message})
+        }
 
         try {
           const updatedBooking = await prisma.booking.update({
@@ -50,24 +64,12 @@ export default async function handler(req, res) {
               ...bookingUpdateData
             },
           }) 
+          res.status(201).json(newBookingMod)
         } catch (err) {
           console.log('status did not update')
           res.status(500).json({error: err.message})
         }
 
-        try {
-          const newBookingMod = await prisma.bookingModDetails.create({
-          data: {
-            bookingId: BookingIdForMod,
-            ...newModData
-          },
-        }
-        ) 
-        res.status(201).json(newBookingMod)
-        } catch (err) {
-          console.log(err)
-          res.status(500).json({error: err.message})
-        }
         break
 
       case 'PATCH':

@@ -156,6 +156,7 @@ export async function getServerSideProps(context) {
       updatedAt: true,
       item: {
         select: {
+          id: true,
           name: true,
           itemPhotos: {
             where: {
@@ -165,17 +166,38 @@ export async function getServerSideProps(context) {
               imageUrl: true
             }
           },
+          rentPerHour: true, 
+          rentPerHourPrice: true,
+          rentPerDay: true,
+          rentPerDayPrice: true,
+          rentPerWeek: true,
+          rentPerWeekPrice: true,
+          minimumRentalPeriod: true,
+          weekendRentPerHour: true,
+          weekendRentPerHourPrice: true,
+          weekendRentPerDay: true,
+          weekendRentPerDayPrice: true,
+          weekendMinimumRentalPeriod: true,
         }
       },
       itemId: true,
-      renter: {
+      // renter: {
+      //   select: {
+      //     userAccount: {
+      //       select: { name: true }
+      //     }
+      //   }
+      // },
+      owner: {
         select: {
           userAccount: {
-            select: { name: true }
+            select: { 
+              name: true,
+              profilePictureUrl: true 
+            }
           }
         }
       },
-      userId: true,
       itemAgreedRate: true,
       itemAgreedEarlyCancelPolicy: true,
       itemAgreedLateCancelationPolicyTime: true,

@@ -23,7 +23,7 @@ function SearchResults({items}) {
   }
   return (
     <>
-      <div className='flex flex-row justify-between'>
+      <div className='border border-red-500 w-full flex flex-row justify-between mb-4'>
         {resultCount === 0 ? <p className='inline-block'>No results</p> : <p className='inline-block'>{resultCount + ' '} Results</p>}
         <div>
           <label htmlFor='sort'>Sort By:</label>
@@ -37,7 +37,7 @@ function SearchResults({items}) {
           </select>
         </div>
       </div>
-      <div className='w-full max-w-[1400px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
+      <div className=' border w-full max-w-[1400px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
         {items.map(item => (
           <ItemCard key={item.id} item={item} />
         ))}

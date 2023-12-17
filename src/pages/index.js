@@ -1,6 +1,6 @@
 import Head from 'next/head'
 // import { Inter } from '@next/font/google'
-import styles from '../styles/Home.module.css'
+// import styles from '../styles/Home.module.css'
 import { prisma } from '../database/db'
 import NavBarSearch from '@/modules/rentee-booking/NavBarSearch';
 import SearchResults from '@/modules/item-search/components/SearchResults';
@@ -29,10 +29,11 @@ export default function Home({items}) {           // items comes from getServerS
       <header>
         <NavBarSearch />
       </header>
-      <main className={styles.main}>
+      <main className=''>
+        <div className='xl-container flex-1 overflow-auto'>
 
-        <SearchResults items={items} />
-
+          <SearchResults items={items} />
+        </div>
       </main>
     </div>
   )

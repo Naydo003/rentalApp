@@ -5,12 +5,16 @@ import ItemCardListings from '@/modules/manage-listings/components/ItemCardListi
 import NavBarManageListings from '@/modules/renters-profile/components/NavbarRentersProfile'
 import { UserContext } from '@/common/contexts/user-context'
 import NavBarRentersProfile from '@/modules/renters-profile/components/NavbarRentersProfile'
+import ButtonMain from '@/common/ButtonMain'
+import { useRouter } from 'next/router'
 
 
 function Bookings({items}) {
 
   console.log('items')
   console.log(items)
+
+  const router = useRouter()
 
   const [ alphabeticalOrder, setAlphabeticalOrder] = useState(false)
   const [ display, setDisplay ] = useState({
@@ -23,13 +27,21 @@ function Bookings({items}) {
 
 
 
-
   return (
     <>
       <NavBarRentersProfile />
       <main>
         <div className='small-container max-w-[750px] flex-1 overflow-auto'>
-          <h1 className='heading'>Listings for {accountName}</h1>
+
+          <div className='flex flex-row justify-between' >
+            <h1 className='heading'>Listings for {accountName}</h1>
+            <ButtonMain classNames='w-fit h-fit flex flex-row justify-center items-center' variant='blackWhite' onSubmit={() => router.push('/create-a-listing')} >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 -ml-2 mr-2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+              New Listing</ButtonMain>
+          </div>
+          
 
 
             <div className='h-fit w-full border' >

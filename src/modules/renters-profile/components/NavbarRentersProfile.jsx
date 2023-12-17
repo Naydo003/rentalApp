@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import Link from 'next/link'
 import Logo from '../../../../public/next.svg'
-import ProfileMenu from '@/modules/rentee-booking/ProfileMenuButton'
+import ProfileMenuButton from '@/modules/rentee-booking/ProfileMenuButton'
 import SearchBar from '@/modules/rentee-booking/SearchBar'
 import { UserContext } from '@/common/contexts/user-context'
 
@@ -19,7 +19,7 @@ function NavBarRentersProfile() {
         <Link className='hidden sm:block bg-blue-100' href='/'> 
           <Logo className='w-[50px] h-[50px]' />      
         </Link>
-        <SearchBar />
+        
 
         <div className='flex flex-row justify-between items-center sm:space-x-4 sm:justify-end w-full'>
 
@@ -33,7 +33,7 @@ function NavBarRentersProfile() {
             </span>
           </div>
           
-          <ProfileMenu />
+          <ProfileMenuButton variant='renter' />
         </div>
     </div>
       </>
